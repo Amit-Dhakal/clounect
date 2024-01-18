@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd ">
+
+    <changeSet author="FSZ"  id="20240108-142500">
+        <createTable tableName="app_usages_log">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="transaction_id" type="UUID"/>
+            <column name="site_id" type="BIGINT"/>
+            <column name="webhook_url" type="VARCHAR(500)"/>
+            <column name="app_id" type="BIGINT"/>
+            <column name="app_name" type="VARCHAR(255)"/>
+            <column name="app_usage_count" type="VARCHAR(255)"/>
+            <column name="app_description" type="VARCHAR(255)"/>
+            <column name="app_vendor" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="company_name" type="VARCHAR(255)"/>
+            <column name="received_payload" type="TEXT"/>
+            <column name="send_payload" type="TEXT"/>
+            <column name="error_log" type="TEXT"/>
+            <column name="status" type="BOOLEAN"/>
+            <column name="created_at" type="TIMESTAMP" defaultOnNull="true" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="last_updated_at" type="TIMESTAMP"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
+
+    <link rel="stylesheet" href="/css/userlink.css">
+
+</head>
+<body>
+<div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h5">Users</h5>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+
+                            <div class="col add-search-container">
+                                <a id="btnAdd" th:href="@{/add-user}" class="btn btn-light"><span
+                                        data-feather="plus"></span>&nbsp;Add Users</a>
+                                <div class="search-container">
+                                    <input type="text" id="searchInput" placeholder="Search by Name or Email"
+                                           class="search-bar">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                <form name="userList">
+                                    <table id="tblForm" class="table rownum-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Company Name</th>
+                                            <th scope="col">Contact Number</th>
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Enable/Disable</th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:if="${userResponse != null}" th:each="user : ${userResponse.content}">
+                                            <td th:text="${user.id}"></td>
+                                            <td th:text="${user.getShortName}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.companyName}"></td>
+                                            <td th:text="${user.phone}"></td>
+                                            <td th:text="${user.address}"></td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-sm"
+                                                     style="margin-top: 6px">
+                                                    <input checked class="form-check-input enable-disable-app" data-on="on" data-off="off"
+                                                           data-toggle="toggle" data-onstyle="success"
+                                                           data-offstyle="danger"
+                                                           style="background-color: white"
+                                                               type="checkbox" id="LinkStart" th:checked="${user.isActive}"
+                                                           th:data-user-id="${user.uuid}"/>
+
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/{uuid}/editUser(uuid=${user.uuid})}"
+                                                   class="btn btn-primary">Update</a>
+                                            </td>
+                                            <td>
+                                                <form id="deleteForm" method="post">
+                                                    <button type="button" class="btn btn-light btnDelete"
+                                                            th:attr="data-user-id=${user.uuid}"><span
+                                                            data-feather="trash-2"></span>
+                                                    </button>
+                                                </form>
+
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
+<script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
+<div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
+<script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
+<div th:replace="~{core/fragments/loader :: common-loader}"></div>
+
+<script th:inline="javascript">
+    feather.replace()
+
+    function toggleAppStatus() {
+        $('.loader-overlay').removeClass('hidden');
+        let $this = $(this).off("change", toggleAppStatus);
+
+        let uuid = $(this).data('user-id');
+        let isActive = $(this).prop('checked');
+        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        let url = '/user/' + uuid + '/disable';
+        if (isActive) {
+            url = '/user/' + uuid + '/enable';
+        }
+        $.ajax({
+            type: 'POST',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            success: function(response) {
+                $('.loader-overlay').addClass('hidden');
+                console.log(response)
+                if (isActive) {
+                    flashMessage("成功", "ユーザーは正常にアクティベートされました" , 0, null, 'info')
+                } else {
+                    flashMessage("成功", "ユーザーは正常に非アクティブ化されました" , 0, null, 'info')
+                }
+
+                //Re-attach event
+                $this.change(toggleAppStatus);
+            },
+            error: function() {
+                $('.loader-overlay').addClass('hidden');
+                if (isActive) {
+                    flashMessage("有効化に失敗しました", "「ユーザーのアクティベーションに失敗しました" , 0);
+                    $this.bootstrapToggle('off');
+                } else {
+                    flashMessage("無効化に失敗しました", "ユーザーの無効化に失敗しました" , 0);
+                    $this.bootstrapToggle('on');
+                }
+
+                // Reset checkbox state if the request fails
+                $('.enable-disable-app[data-app-id="' + uuid + '"]').prop('checked', !isActive);
+
+                //Re-attach event
+                $this.change(toggleAppStatus);
+            }
+        });
+    }
+    $('.enable-disable-app').change(toggleAppStatus);
+
+    $(document).ready(function () {
+        // Button click event
+        $(".btnDelete").on("click", function () {
+            if (confirm('Are you sure you want to delete this user?')) {
+                let uuid = $(this).data('userId');
+
+                let actionUrl = '/user/' + uuid + '/delete';
+
+                $.ajax({
+                    type: "POST",
+                    url: actionUrl,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    success: function () {
+                        alert("User deleted successfully");
+                        location.reload();
+                    },
+                    error: function () {
+                        alert("Error deleting user");
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            let value = $(this).val().toLowerCase();
+            $("#tblForm tbody tr").filter(function () {
+                // Select the "Name" and "Email" cells within the current row
+                let name = $(this).find("td:nth-child(2)").text().toLowerCase();
+                let email = $(this).find("td:nth-child(3)").text().toLowerCase();
+
+                // Toggle the visibility based on whether the search value is found in "Name" or "Email"
+                $(this).toggle(name.indexOf(value) > -1 || email.indexOf(value) > -1);
+            });
+        });
+    });
+</script>
+</body>
+</html>

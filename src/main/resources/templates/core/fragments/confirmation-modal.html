@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base-template}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="confirmation-modal" class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header alert alert-info">
+                <span data-feather="help-circle"></span>&nbsp;
+                <h6 class="modal-title" id="messageModalLabel"></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <h6 class="modal-body" id="messageModalBody">
+            </h6>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <button type="button" id="confirmButton" onclick="executeCallBack()" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Javascript fragment for modal-->
+<script th:fragment="modal-script">
+    var callback;
+
+    function openModal(modalTitle, message, callbackFunc) {
+        callback = callbackFunc;
+        $('#confirmModal #messageModalLabel').text(modalTitle);
+        $('#confirmModal #messageModalBody').html(message);
+        $('#confirmModal').modal('show');
+    }
+
+    function closeModal() {
+        // 確認メッセージで保存を選択
+        $('#confirmModal').modal('hide');
+    }
+
+    function executeCallBack() {
+        if (callback && typeof callback === 'function') {
+            callback();
+        }
+
+        // Close the modal
+        closeModal();
+    }
+
+</script>
+
+</body>
+</html>

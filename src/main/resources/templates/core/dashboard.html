@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clounect</title>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h5">ダッシュボード</h5>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col col-md-auto">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                    <h6 class="h6">お客様情報</h6>
+                                </div>
+                                <div class="padding-1em">
+                                    会社名：<span th:text="${dashboardData.companyName}"> </span><br/>
+                                    お名前：<span th:text="${dashboardData.name}"></span><br/>
+                                    住所：<span th:text="${dashboardData.address}"></span> <br/>
+                                    <br />
+                                    月間連携ユーザー数：<span id="month_user" th:text="${dashboardData.totalUsers}"></span><br/>
+                                    月間カレンダー連携実行数： <span id="git p">10 件 (うち失敗 3 件)</span><br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                </main>
+            </div>
+        </div>
+        <br/>
+        <br/>
+    </section>
+</div>
+
+</body>
+<script>
+    feather.replace()
+</script>
+</html>

@@ -1,0 +1,110 @@
+.form-group {
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
+.flash-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.success {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+/**
+Pagination
+ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.pagination a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.pagination .active {
+    background-color: #007bff;
+    color: #fff;
+    pointer-events: none;
+}
+
+.pagination span {
+    margin: 0 5px;
+    color: #333;
+}
+
+.pagination .disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+/**
+Loader
+ */
+.loader-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background-color:rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    z-index: 1109;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+.loader-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.loader-ring:after {
+    content: " ";
+    display: block;
+    width: 90px;
+    height: 90px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    border-color: rgb(250, 144, 5) transparent;
+    animation: loader-ring 1.2s linear infinite;
+}
+
+@keyframes loader-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/**
+Error blocks
+ */
+.has-error input, .has-error textarea {
+    border-color: #a94442;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+.has-error .error {
+    color: #a94442;
+    margin-bottom: 20px;
+}

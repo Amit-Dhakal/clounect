@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd ">
+
+    <changeSet  author="FSZ"  id="20240108-141001">
+        <createTable tableName="app_data">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="uuid" type="UUID" defaultOnNull="true" defaultValueComputed="uuid_generate_v4()">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="app_site_id" type="BIGINT">
+                <constraints nullable="false" references="app_site_info(id)" foreignKeyName="app_site_app_data_fk"/>
+            </column>
+            <column name="status" type="BOOLEAN"/>
+            <column name="received_payload" type="TEXT"/>
+            <column name="send_payload" type="TEXT"/>
+            <column name="exec_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="cycle" type="VARCHAR(255)"/>
+            <column name="detail" type="TEXT"/>
+            <column name="send_flag" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

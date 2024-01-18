@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- message Modal -->
+  <div th:fragment="message-modal" class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div id="modalHeader" class="modal-header alert">
+          <span id="messageIcon" data-feather="alert-triangle"></span>&nbsp;
+          <h6 class="modal-title" id="messageModalLabel"></h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <h6 class="modal-body" id="messageModalBody">
+        </h6>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script th:fragment="message-modal-script">
+  function flashMessage(titlestr, bodystr, timeout, focusto, level) {
+    $('#messageModal #messageModalLabel').text("");
+    $('#messageModal #messageModalBody').text("");
+    $('#messageModal #modalHeader').removeClass(function(index, className) {
+      return (className.match(/\balert-\S+/g) || []).join(' ');
+    });
+    if (level=="info") {
+      $('#messageModal #modalHeader').addClass('alert-info');
+      $('#messageModal #messageIcon').attr('data-feather', 'help-circle');
+    } else {
+      $('#messageModal #modalHeader').addClass('alert-warning');
+      $('#messageModal #messageIcon').attr('data-feather', 'alert-triangle');
+    }
+    $('#messageModal #messageModalLabel').html(titlestr);
+    $('#messageModal #messageModalBody').html(bodystr);
+    feather.replace();
+    $('#messageModal').modal('show');
+    if (timeout > 0) {
+      setTimeout(() => {
+        $('#messageModal #messageModal').modal('hide');
+      }, timeout);
+    }
+    if (focusto) {
+      $('#messageModal').on('hidden.bs.modal', function () {
+        focusto.focus();
+        $('#messageModal').off('hidden.bs.modal');
+      });
+    }
+  }
+</script>
+</body>
+</html>

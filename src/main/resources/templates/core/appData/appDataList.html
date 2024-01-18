@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>App Info</title>
+  <div th:replace="~{core/fragments/header :: common-header}"></div>
+
+</head>
+<body>
+<div>
+  <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+  <section class="vh-100">
+    <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+         th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+    <h1> User App Management</h1>
+    <br/>
+    <br/>
+  </section>
+</div>
+
+<script>
+  feather.replace()
+</script>
+</body>
+</html>

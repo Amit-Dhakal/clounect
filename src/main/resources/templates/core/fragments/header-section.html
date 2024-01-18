@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base-template}">
+<head>
+    <style>
+        .navbar-brand {
+            flex: 0 0 297px;
+        }
+    </style>
+</head>
+<body>
+<header th:fragment="header-section" class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" style="flex: 0 0 297px;" th:href="@{/dashboard}"><img
+            src="/img/clounectb32.png"></a>
+    <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+            <form name="logout-form" th:action="@{/logout}" method="post">
+                <button class="nav-link px-3 logout-button" style="background:none !important; border:none !important; cursor:pointer;" type="submit">ログアウト</button>
+            </form>
+        </div>
+    </div>
+</header>
+</body>
+</html>

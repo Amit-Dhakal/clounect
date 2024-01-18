@@ -5,7 +5,26 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
 
-    <!-- Include individual changelog files -->
-    <!-- Add more include tags for other changesets -->
+    <changeSet id="20240109-141414" author="FSZ">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+    </changeSet>
+    <include file="users.xml" relativeToChangelogFile="true"/>
+    <include file="app_master.xml" relativeToChangelogFile="true"/>
+    <include file="app_site_info.xml" relativeToChangelogFile="true"/>
+    <include file="app_data.xml" relativeToChangelogFile="true"/>
+    <include file="app_schedules.xml" relativeToChangelogFile="true"/>
+    <include file="app_usages_log.xml" relativeToChangelogFile="true"/>
 
+    <changeSet id="20240109-14-15" author="FSZ">
+        <insert tableName="app_master">
+            <column name="name" value="Googleカレンダー"/>
+            <column name="description" value="JustSFA to Google Calendar integration"/>
+            <column name="module_name" value="googleCalendarPlugin"/>
+            <column name="vendor_name" value="FSZ"/>
+            <column name="created_by" valueComputed="1"/>
+            <column name="created_at" valueComputed="NOW()"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

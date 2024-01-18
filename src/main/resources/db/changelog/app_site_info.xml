@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd ">
+
+    <changeSet  author="FSZ"  id="20240108-140701">
+        <createTable tableName="app_site_info">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="uuid" type="UUID" defaultOnNull="true" defaultValueComputed="uuid_generate_v4()">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="webhook_url" type="VARCHAR(500)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="app_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="app_master_site_info_fk" references="app_master(id)"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="users_site_info_fk" references="users(id)" />
+            </column>
+            <column name="config" type="JSONB"/>
+            <column name="usage_count" type="INTEGER"/>
+            <column name="is_enabled" type="BOOLEAN"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" type="BIGINT"/>
+            <column name="last_updated_at" type="TIMESTAMP"/>
+            <column name="last_updated_by" type="BIGINT"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+            <column name="deleted_by" type="BIGINT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

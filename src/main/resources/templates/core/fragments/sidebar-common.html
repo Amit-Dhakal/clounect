@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <ul class="nav flex-column mb-2" th:fragment="sidebar-common-log">
+    <li class="nav-item">
+      <a class="nav-link" th:href="@{/app-log}" th:classappend="${requestURI != null && #strings.startsWith(requestURI, '/app-log') ? 'active' : ''}">
+        <span data-feather="monitor"></span>
+        マニュアル
+      </a>
+    </li>
+  </ul>
+
+  <ul class="nav flex-column mb-2" th:fragment="sidebar-common-manual">
+    <li class="nav-item">
+      <a class="nav-link" href="/help/JUST.SFA-Outlook連携設定手順書.pdf" target="_blank">
+        <span data-feather="help-circle"></span>
+        マニュアル
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

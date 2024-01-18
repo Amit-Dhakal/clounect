@@ -1,0 +1,33 @@
+/*.rownum-table {*/
+/*  counter-reset: rowCount;*/
+/*}*/
+/*.rownum-table > tbody > tr {*/
+/*  counter-increment: rowCount;*/
+/*}*/
+/*.rownum-table > tbody > tr > td:first-child::before {*/
+/*  content: counter(rowCount);*/
+/*}*/
+.rownum-cell {
+  text-align: center;
+}
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+input[type="text"]:read-only{
+  background-color:rgb(250, 250, 255) !important;
+}
+
+.add-search-container{
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-container{
+  margin-left: auto;
+}
+
+.search-bar {
+  width: 210px;
+  height: 35px;
+}

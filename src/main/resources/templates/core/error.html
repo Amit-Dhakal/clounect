@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Error Page</title>
+  <link rel="icon" href="/img/favicon.ico" id="favicon">
+  <link rel="stylesheet" href="/css/error/style.css">
+
+</head>
+<body class="loading">
+<h1><span th:text="${status}"></span></h1>
+<h2><span th:text="${errorMessage}"> <b>:(</b></span></h2>
+<div class="gears">
+  <div class="gear one">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <div class="gear two">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <div class="gear three">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="/js/error/script.js" type="text/javascript"></script>
+</body>
+</html>

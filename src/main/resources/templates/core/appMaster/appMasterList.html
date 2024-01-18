@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
+    <link rel="stylesheet" href="/css/appMaster.css">
+
+
+</head>
+<body>
+<div>
+    <div th:replace="~{core/fragments/loader :: common-loader}"></div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                        <h5 class="h5">APP MASTER LIST</h5>
+                                    </div>
+
+                                    <table id="tblForm" class="table rownum-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Enable/Disable</th>
+                                            <th scope="col">Actions</th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="appMasterDto : ${appMasters}">
+                                            <td th:text="${appMasterDto.id}"></td>
+                                            <td th:text="${appMasterDto.name}"></td>
+                                            <td th:text="${appMasterDto.description}"></td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-sm"
+                                                     style="margin-top: 6px">
+                                                        <input checked class="form-check-input enable-disable-app" data-on="on" data-off="off"
+                                                           data-toggle="toggle" data-onstyle="success"
+                                                           data-offstyle="danger"
+                                                           style="background-color: white"
+                                                           type="checkbox" th:checked="${appMasterDto.isActive}"
+                                                           th:data-app-id="${appMasterDto.uuid}"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/app-master/{uuid}(uuid=${appMasterDto.uuid})}" class="btn btn-success">View</a>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/app-master/{uuid}/edit(uuid=${appMasterDto.uuid})}" class="btn btn-primary">Update</a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                <div th:replace="~{/core/fragments/pagination :: common-paginator(pageData=${appMasters}, pageUrl='/app-master')}">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</div>
+<div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
+<script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
+<div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
+<script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
+
+<script>
+    feather.replace()
+
+    function deleteRequest(formId) {
+        console.log(formId)
+
+        // Proceed with the form submission
+        document.getElementById(formId).submit();
+    }
+
+    function openConfirmationModal(formId) {
+        console.log(formId)
+
+        openModal("削除の確認", "アプリケーションを削除します。 大丈夫ですか？<br/><br/>\n" +
+            "※アプリケーションを削除すると、すべてのユーザーがすべてのアプリケーションを使用できなくなります。", function () {
+            deleteRequest(formId);
+        });
+    }
+
+    function toggleAppStatus() {
+        $('.loader-overlay').removeClass('hidden');
+        let $this = $(this).off("change", toggleAppStatus);
+
+        let uuid = $(this).data('app-id');
+        let isActive = $(this).prop('checked');
+        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        let url = '/app-master/' + uuid + '/disable';
+        if (isActive) {
+            url = '/app-master/' + uuid + '/enable';
+        }
+        $.ajax({
+            type: 'POST',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            success: function(response) {
+                $('.loader-overlay').addClass('hidden');
+                console.log(response)
+                if (isActive) {
+                    flashMessage("成功", "アプリケーションは正常に有効になりました" , 0, null, 'info')
+                } else {
+                    flashMessage("成功", "アプリケーションは正常に無効になりました" , 0, null, 'info')
+                }
+
+                //Re-attach event
+                $this.change(toggleAppStatus);
+            },
+            error: function() {
+                $('.loader-overlay').addClass('hidden');
+                if (isActive) {
+                    flashMessage("有効化に失敗しました", "アプリケーションを有効にできませんでした" , 0);
+                    $this.bootstrapToggle('off');
+                } else {
+                    flashMessage("無効化に失敗しました", "アプリケーションを無効にできませんでした" , 0);
+                    $this.bootstrapToggle('on');
+                }
+
+                // Reset checkbox state if the request fails
+                $('.enable-disable-app[data-app-id="' + uuid + '"]').prop('checked', !isActive);
+
+                //Re-attach event
+                $this.change(toggleAppStatus);
+            }
+        });
+    }
+
+    $('.enable-disable-app').change(toggleAppStatus);
+
+</script>
+</body>
+</html>

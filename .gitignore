@@ -26,6 +26,13 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+#properties files
+application.properties
+application-dev.properties
+
+#log files
+logs/
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>AppMaster View</title>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
+
+</head>
+<body>
+
+<div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                <form name="appList">
+                                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                        <h5 class="h5">APP MASTER DETAILS</h5>
+                                    </div>
+
+                                    <div class="flash-message" th:if="${messages}">
+                                        <ul th:each="message : ${messages}">
+                                            <li th:text="${message}" class="ui error message" />
+                                        </ul>
+                                    </div>
+
+                                    <table cellpadding="10">
+                                        <tr>
+                                            <th>ID:</th>
+                                            <td th:text="${appMaster.uuid}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Name:</th>
+                                            <td th:text="${appMaster.name}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Description:</th>
+                                            <td th:text="${appMaster.description}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Vendor Name:</th>
+                                            <td th:text="${appMaster.vendorName}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Module Name:</th>
+                                            <td th:text="${appMaster.moduleName}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Is Active:</th>
+                                            <td th:text="${appMaster.isActive} ? 'Yes' : 'No'"></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="2">
+                                                <a th:href="@{/app-master/{uuid}/edit(uuid=${appMaster.uuid})}" class="btn btn-primary">Edit</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    feather.replace()
+    setTimeout(function() {
+        $('.flash-message').hide();
+    }, 5000)
+</script>
+</body>
+</html>

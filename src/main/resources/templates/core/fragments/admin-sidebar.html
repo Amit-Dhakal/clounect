@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <nav id="sidebarMenu" class="d-md-block bg-light sidebar" th:fragment="admin-sidebar">
+    <div class="position-sticky mt-2">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" th:href="@{/dashboard}" th:classappend="${requestURI != null && #strings.startsWith(requestURI, '/dashboard') ? 'active' : ''}">
+            <span data-feather="home"></span>
+            ダッシュボード
+          </a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link" href="#">
+            <span data-feather="settings"></span>
+              管理者管理
+          </span>
+          <ul class="nav-second">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" th:href="@{/app-master}" th:classappend="${requestURI != null && #strings.startsWith(requestURI, '/app-master') ? 'active' : ''}">
+                <span data-feather="folder-plus"></span>
+                アプリ管理
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" th:href="@{/admin/dashboard}">
+                <span data-feather="users"></span>
+                ユーザー
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" th:href="@{/app-data}" th:classappend="${requestURI != null && #strings.startsWith(requestURI, '/app-data') ? 'active' : ''}">
+                <span data-feather="folder-plus"></span><span data-feather="plus"></span><span data-feather="users"></span>
+                ユーザーアプリ管理
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul id="common-sidebar-menu-log" class="d-md-block bg-light sidebar"
+           th:replace="~{core/fragments/sidebar-common ::sidebar-common-log}"></ul>
+      <ul id="common-sidebar-menu-manual" class="d-md-block bg-light sidebar"
+          th:replace="~{core/fragments/sidebar-common ::sidebar-common-manual}"></ul>
+    </div>
+  </nav>
+</body>
+</html>

@@ -13,155 +13,149 @@
     }
 </style>
 <body>
-    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
-    <section class="vh-100">
-        <nav id="sidebarMenu" class="d-md-block bg-light sidebar" th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
-
-        <div class="container-fluid">
-            <div class="row">
-                <main class="col" style="margin-left: 297px">
-                    <div class="container-fluid">
-                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                            <h5 class="h6">ユーザー登録</h5>
-                        </div>
-                        <div class="flash-message has-error" th:if="${messages}">
-                            <ul th:each="message : ${messages}">
-                                <li th:text="${message}" class="ui error message"></li>
-                            </ul>
-                        </div>
-                        <form id="user-form" class="mx-1 mx-md-4"  th:action="@{${#strings.equalsIgnoreCase(title, 'Edit User') ? '/user/'+ user.uuid + '/update'  : '/add-user'}}"
-                              th:object="${user}" th:method="post" method="post">
-
-                            <input type="hidden" th:field="${user.id}"/>
-                            <input type="hidden" th:if="${#strings.equalsIgnoreCase(title, 'Edit User')}" th:field="${user.email}"/>                            <div class="row row-margin-050" th:classappend="${#fields.hasErrors('shortName')} ? 'has-error' : ''">
-                                <div class="col">
-                                    <label class="form-label" for="name">Name</label>
-                                    <input type="text" id="name" class="form-control" placeholder="Full Name"
-                                           th:field="*{shortName}" th:value="user.name" required/>
-                                    <div class="error" th:if="${#fields.hasErrors('shortName')}" th:errors="*{shortName}"></div>
-                                </div>
-                                <div class="col">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-050"
-                                 th:classappend="${#fields.hasErrors('email')} ? 'has-error' : ''">
-                                <div class="col">
-                                    <label class="form-label" for="email">Email</label>
-                                    <input type="email" id="email" class="form-control" placeholder="Email"
-                                           th:value="${user.email}" th:field="*{email}"
-                                           th:disabled="@{${#strings.equalsIgnoreCase(title, 'Edit User') ? true : false}}"/>
-                                    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-050" th:classappend="${#fields.hasErrors('companyName')} ? 'has-error' : ''">
-                                <div class="col">
-                                    <label class="form-label" for="companyName" th:value="user.companyName">
-                                        Company Name</label>
-                                    <input type="text" id="companyName" class="form-control"
-                                           placeholder="Company Name" th:field="*{companyName}" required/>
-                                    <div class="error" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></div>
-
-                                </div>
-                                <div class="col">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-050"
-                                 th:classappend="${#fields.hasErrors('phone')} ? 'has-error' : ''">
-                                <div class="col">
-                                    <label class="form-label" for="contactNo" th:value="user.companyNo">
-                                        Contact Number</label>
-                                    <input type="text" id="contactNo" class="form-control"
-                                           pattern="^[+][1-9][0-9]{0,24}$" title="Enter valid phone number"
-                                           placeholder="Contact Number" th:field="*{phone}" required/>
-                                    <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
-                                </div>
-                                <div class="col">
-                                </div>
-                            </div>
-
-                            <div class="row row-margin-050" th:classappend="${#fields.hasErrors('address')} ? 'has-error' : ''">
-                                <div class="col">
-                                    <label class="form-label" for="address" th:value="user.address">
-                                        Address</label>
-                                    <input type="text" id="address" class="form-control"
-                                           placeholder="Address" th:field="*{address}" required/>
-                                    <div class="error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
-
-                                </div>
-                                <div class="col">
-                                </div>
-                            </div>
-
-
-                            <div class="row row-margin-10">
-                                <div class="col">
-                                    <button type="button" name="submitButton" class="btn btn-success" onclick="openConfirmationModal()">&nbsp;Register</button>
-                                </div>
-                            </div>
-                        </form>
-
+<header th:replace="~{core/fragments/header-section :: header-section}"></header>
+<section class="vh-100">
+    <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+         th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col" style="margin-left: 297px">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">ユーザー登録</h5>
                     </div>
-                </main>
-            </div>
+                    <div class="flash-message has-error" th:if="${messages}">
+                        <ul th:each="message : ${messages}">
+                            <li th:text="${message}" class="ui error message"></li>
+                        </ul>
+                    </div>
+                    <form id="user-form" class="mx-1 mx-md-4"
+                          th:action="@{${#strings.equalsIgnoreCase(title, 'Edit User') ? '/user/'+ user.uuid + '/update'  : '/user/add'}}"
+                          th:object="${user}" th:method="post" method="post">
+                        <input type="hidden" th:field="${user.id}"/>
+                        <input type="hidden" th:if="${#strings.equalsIgnoreCase(title, 'Edit User')}"
+                               th:field="${user.email}"/>
+                        <div class="row row-margin-050"
+                             th:classappend="${#fields.hasErrors('shortName')} ? 'has-error' : ''">
+                            <div class="col">
+                                <label class="form-label" for="name">Name</label>
+                                <input type="text" id="name" class="form-control" placeholder="Full Name"
+                                       th:field="*{shortName}" th:value="user.name" required/>
+                                <div class="error" th:if="${#fields.hasErrors('shortName')}"
+                                     th:errors="*{shortName}"></div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row row-margin-050"
+                             th:classappend="${#fields.hasErrors('email')} ? 'has-error' : ''">
+                            <div class="col">
+                                <label class="form-label" for="email">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="Email"
+                                       th:value="${user.email}" th:field="*{email}"
+                                       th:disabled="@{${#strings.equalsIgnoreCase(title, 'Edit User') ? true : false}}"/>
+                            </div>
+                            <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row row-margin-050"
+                             th:classappend="${#fields.hasErrors('companyName')} ? 'has-error' : ''">
+                            <div class="col">
+                                <label class="form-label" for="companyName" th:value="user.companyName">
+                                    Company Name</label>
+                                <input type="text" id="companyName" class="form-control"
+                                       placeholder="Company Name" th:field="*{companyName}" required/>
+                                <div class="error" th:if="${#fields.hasErrors('companyName')}"
+                                     th:errors="*{companyName}"></div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row row-margin-050"
+                             th:classappend="${#fields.hasErrors('phone')} ? 'has-error' : ''">
+                            <div class="col">
+                                <label class="form-label" for="contactNo" th:value="user.companyNo">
+                                    Contact Number</label>
+                                <input type="text" id="contactNo" class="form-control"
+                                       pattern="^[+][1-9][0-9]{0,24}$" title="Enter valid phone number"
+                                       placeholder="Contact Number" th:field="*{phone}" required/>
+                                <div class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row row-margin-050"
+                             th:classappend="${#fields.hasErrors('address')} ? 'has-error' : ''">
+                            <div class="col">
+                                <label class="form-label" for="address" th:value="user.address">
+                                    Address</label>
+                                <input type="text" id="address" class="form-control"
+                                       placeholder="Address" th:field="*{address}" required/>
+                                <div class="error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row row-margin-10">
+                            <div class="col">
+                                <button type="button" name="submitButton" class="btn btn-success"
+                                        onclick="openConfirmationModal()">&nbsp;Register
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </main>
         </div>
-
-    </section>
-    <div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
-    <script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
-    <div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
-    <script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
-
-    <script>
-
-        function validateForm() {
-            let name = $('#name').val().trim();
-            let message = "";
-            if(!name) {
-                message += "名前フィールドは必須です。<br/>";
-            }
-
-            let email = $('#email').val().trim();
-            if(!email) {
-                message += "電子メールは必須です。<br/>";
-            }
-
-            let companyName = $('#companyName').val().trim();
-            if(!companyName) {
-                message += "会社名は必須です。<br/>";
-            }
-
-            let contactNo = $('#contactNo').val().trim();
-            if(!contactNo) {
-                message += "連絡先番号は必須です。<br/>";
-            }
-
-            let address = $('#address').val().trim();
-            if(!address) {
-                message += "住所は必須です。<br/>";
-            }
-            if(message) {
-                flashMessage("検証に失敗しました", message , 0);
-                return false;
-            }
-            return true;
+    </div>
+</section>
+<div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
+<script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
+<div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
+<script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
+<script>
+    function validateForm() {
+        let name = $('#name').val().trim();
+        let message = "";
+        if (!name) {
+            message += "名前フィールドは必須です。<br/>";
         }
-
-        function submitForm() {
-            if(!validateForm()) {
-                return;
-            }
-
-            // Proceed with the form submission
-            document.getElementById('user-form').submit();
+        let email = $('#email').val().trim();
+        if (!email) {
+            message += "電子メールは必須です。<br/>";
         }
-
-        function openConfirmationModal() {
-            openModal("アップデートを確認してください」", "「ユーザー情報を保存します。 わかりました？ <br/>", submitForm)
+        let companyName = $('#companyName').val().trim();
+        if (!companyName) {
+            message += "会社名は必須です。<br/>";
         }
+        let contactNo = $('#contactNo').val().trim();
+        if (!contactNo) {
+            message += "連絡先番号は必須です。<br/>";
+        }
+        let address = $('#address').val().trim();
+        if (!address) {
+            message += "住所は必須です。<br/>";
+        }
+        if (message) {
+            flashMessage("検証に失敗しました", message, 0);
+            return false;
+        }
+        return true;
+    }
 
-    </script>
+    function submitForm() {
+        if (!validateForm()) {
+            return;
+        }
+        // Proceed with the form submission
+        document.getElementById('user-form').submit();
+    }
+
+    function openConfirmationModal() {
+        openModal("アップデートを確認してください」", "「ユーザー情報を保存します。 わかりました？ <br/>", submitForm)
+    }
+</script>
 </body>
 </html>

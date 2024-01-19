@@ -9,7 +9,6 @@ import jp.co.fsz.clounect.core.service.AppMasterService;
 import jp.co.fsz.clounect.core.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +39,14 @@ public class AppMasterServiceImpl implements AppMasterService {
     String sortParam = "createdAt";
     pageable.getSortOr(Sort.by(sortParam));
     return appMasterRepository.findAll(pageable).map(AppMasterDto::fromEntity);
+  }
+
+  @Override
+  public Page<AppMasterDto> searchAppMaster(String query, Pageable pageable) {
+    String sortParam = "createdAt";
+    pageable.getSortOr(Sort.by(sortParam));
+
+    return appMasterRepository.findByNameOrVendorName(query, pageable).map(AppMasterDto::fromEntity);
   }
 
   @Override

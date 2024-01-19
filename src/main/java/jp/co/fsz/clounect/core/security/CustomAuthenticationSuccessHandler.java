@@ -53,22 +53,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       log.info("UserAttributes: {}", userAttributes);
       log.info("Authority: {}", auth.getAuthority());
 
-      // TODO: Remove check and simply redirect to /dashboard
-      log.info("URL:: {}", request.getRequestURI());
-      log.info("URL:: {}", request.getPathInfo());
-      log.info("URL:: {}", request.getRequestURL());
-      log.info("URL:: {}", request.getProtocol());
-      log.info("URL:: {}", request.getServerName());
-      log.info("URL:: {}", request.getLocalPort());
-
-      if ("ROLE_ADMIN".equals(auth.getAuthority())) {
-        System.out.println(userAttributes.get("cognito:username") + " Is Admin!");
-        response.sendRedirect("/admin/dashboard");
-      } else if ("ROLE_USER".equals(auth.getAuthority())) {
-        System.out.println(userAttributes.get("cognito:username") + " Is User!");
-        response.sendRedirect("/user/dashboard");
-      }
     }
+
+    response.sendRedirect("/dashboard");
+
   }
 }
-

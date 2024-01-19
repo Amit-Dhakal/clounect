@@ -4,16 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clounect</title>
-    <style>
-        .main-container {
-            display: flex;
-        }
-
-        .nav-item > a, .nav-item > span {
-            color: black;
-        }
-    </style>
-    <!-- Custom styles for this template -->
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
 
     <meta name="description" content="">
     <meta name="author" content="Feeler Systemz Inc.">
@@ -28,141 +19,150 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </head>
+
 <body>
-<div th:replace="~{core/fragments/header-section :: header-section}" ></div>
+<div th:replace="~{core/fragments/header-section :: header-section}"></div>
 <div class="main-container">
-  <div th:replace="~{core/fragments/sidebar :: header}"></div>
-    <div class="container-fluid" style="flex: 2">
-        <div class="row">
-            <main class="col">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h5">ダッシュボード</h5>
-                </div>
-                <div class="container-fluid">
-                    <div class="row row-margin-05">
-                        <div class="col col-md-auto">
-                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                <h6 class="h6">お客様情報</h6>
-                            </div>
-                            <div class="padding-1em">
-                                会社名：<span th:text="${user.companyName}"></span><br/>
-                                お名前：<span th:text="${user.shortName}"></span><br/>
-                                <br/>
-                                月間連携ユーザー数：<span id="month_user">6</span><br/>
-                                月間カレンダー連携実行数： <span id="month_linkcount">0 件 (うち失敗 0 件)</span><br/>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                                <h6 class="h6">連携実行ログ (過去3か月分)</h6>
-                                <div>
-                                    <button type="button" id="prevButton" class="btn btn-light btn-sm"><span
-                                            data-feather="chevron-left"></span></button>
-                                    <span id="pageview">1 / 1 ページ</span>
-                                    <button type="button" id="nextButton" class="btn btn-light btn-sm"><span
-                                            data-feather="chevron-right"></span></button>
-                                    <button type="button" id="refreshButton" class="btn btn-light btn-sm"><span
-                                            data-feather="refresh-cw"></span></button>
+    <div th:replace="~{core/fragments/sidebar :: header}"></div>
+    <section class="vh-100">
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h5">ダッシュボード</h5>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col col-md-auto">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                    <h6 class="h6">お客様情報</h6>
                                 </div>
+
+
+                                <div class="padding-1em">
+                                    会社名：<span th:text="${user.companyName}"></span><br/>
+                                    お名前：<span th:text="${user.shortName}"></span><br/>
+                                    <br/>
+                                    月間連携ユーザー数：<span id="month_user">6</span><br/>
+                                    月間カレンダー連携実行数： <span
+                                        id="month_linkcount">0 件 (うち失敗 0 件)</span><br/>
+                                </div>
+
+
                             </div>
-                            <div>
-                                <table id="tblForm" class="table rownum-table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">連携日時</th>
-                                        <th scope="col">お名前</th>
-                                        <th scope="col">連携先</th>
-                                        <th scope="col">連携方法</th>
-                                        <th scope="col">結果</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>2023-12-31 00:42:58</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>削除</td>
-                                        <td class='text-danger'>失敗</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:38:25</td>
-                                        <td>管理者太郎</td>
-                                        <td>OUTLOOKからJUST.SFA</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:35:50</td>
-                                        <td>管理者太郎</td>
-                                        <td>OUTLOOKからJUST.SFA</td>
-                                        <td>更新</td>
-                                        <td class='text-danger'>失敗</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:33:37</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:30:01</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:27:50</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-12-31 00:19:13</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-02-01 20:00:42</td>
-                                        <td>管理者太郎</td>
-                                        <td>OUTLOOKからJUST.SFA</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-02-01 19:58:39</td>
-                                        <td>管理者太郎</td>
-                                        <td>JUST.SFAからOUTLOOK</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2023-01-28 01:22:56</td>
-                                        <td>管理者太郎</td>
-                                        <td>OUTLOOKからJUST.SFA</td>
-                                        <td>更新</td>
-                                        <td class='text-success'>成功</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                            <div class="col">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                    <h6 class="h6">連携実行ログ (過去3か月分)</h6>
+                                    <div>
+                                        <button type="button" id="prevButton" class="btn btn-light btn-sm"><span
+                                                data-feather="chevron-left"></span></button>
+                                        <span id="pageview">1 / 1 ページ</span>
+                                        <button type="button" id="nextButton" class="btn btn-light btn-sm"><span
+                                                data-feather="chevron-right"></span></button>
+                                        <button type="button" id="refreshButton" class="btn btn-light btn-sm"><span
+                                                data-feather="refresh-cw"></span></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <table id="tblForm" class="table rownum-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">連携日時</th>
+                                            <th scope="col">お名前</th>
+                                            <th scope="col">連携先</th>
+                                            <th scope="col">連携方法</th>
+                                            <th scope="col">結果</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>2023-12-31 00:42:58</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>削除</td>
+                                            <td class='text-danger'>失敗</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:38:25</td>
+                                            <td>管理者太郎</td>
+                                            <td>OUTLOOKからJUST.SFA</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:35:50</td>
+                                            <td>管理者太郎</td>
+                                            <td>OUTLOOKからJUST.SFA</td>
+                                            <td>更新</td>
+                                            <td class='text-danger'>失敗</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:33:37</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:30:01</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:27:50</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-12-31 00:19:13</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-02-01 20:00:42</td>
+                                            <td>管理者太郎</td>
+                                            <td>OUTLOOKからJUST.SFA</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-02-01 19:58:39</td>
+                                            <td>管理者太郎</td>
+                                            <td>JUST.SFAからOUTLOOK</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-01-28 01:22:56</td>
+                                            <td>管理者太郎</td>
+                                            <td>OUTLOOKからJUST.SFA</td>
+                                            <td>更新</td>
+                                            <td class='text-success'>成功</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <br/>
-            </main>
+                    <br/>
+                </main>
+            </div>
         </div>
-    </div>
+    </section>
 </div>
 <br/>
 <br/>
-
 <script>
     feather.replace()
 </script>
 </body>
+
 </html>

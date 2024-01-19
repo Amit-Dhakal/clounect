@@ -39,6 +39,9 @@ public class AwsCognitoService {
   @Value("${spring.security.oauth2.client.registration.cognito.clientSecret}")
   private String clientSecret;
 
+  @Value("spring.security.oauth2.client.userPoolRegion")
+  private String userPoolRegion;
+
   @Value("${spring.security.oauth2.client.userPoolId}")
   private String userPoolId;
 
@@ -64,7 +67,7 @@ public class AwsCognitoService {
    * @since 1.0
    */
   private CognitoIdentityProviderClient createCognitoIdentityProviderClient() {
-    return CognitoIdentityProviderClient.builder().region(Region.EU_NORTH_1)
+    return CognitoIdentityProviderClient.builder()
         .credentialsProvider(StaticCredentialsProvider.create(getAWSLoginCredentials()))
         .build();
   }

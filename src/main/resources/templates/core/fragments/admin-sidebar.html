@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base-template}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -14,7 +17,7 @@
             ダッシュボード
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
           <span class="nav-link" href="#">
             <span data-feather="settings"></span>
               管理者管理
@@ -27,7 +30,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" th:href="@{/admin/dashboard}">
+              <a class="nav-link" aria-current="page" th:href="@{/user}" th:classappend="${requestURI != null && #strings.startsWith(requestURI, '/user') ? 'active' : ''}">
                 <span data-feather="users"></span>
                 ユーザー
               </a>

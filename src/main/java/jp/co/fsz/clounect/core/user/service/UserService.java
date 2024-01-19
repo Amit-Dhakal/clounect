@@ -3,12 +3,14 @@ package jp.co.fsz.clounect.core.user.service;
 import jp.co.fsz.clounect.core.dto.AppMasterDto;
 import jp.co.fsz.clounect.core.dto.UserResponse;
 import jp.co.fsz.clounect.core.user.dto.UserDto;
-import jp.co.fsz.clounect.core.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * <p>[概 要] ユーザーサービスREST API 処理インターフェース。</p>
@@ -28,8 +30,9 @@ public interface UserService {
 
   void deleteUser(String id);
 
-  UserResponse getAllUsers(int pageNo, int pageSize, String sortBy, String sortOrder);
+  Page<UserDto> getAllUsers(Pageable pageable);
 
+  Page<UserDto> searchUser(String query, Pageable pageable);
 
   UserDto findUserByEmail(String email);
 
@@ -37,9 +40,9 @@ public interface UserService {
 
   HashMap<String, Long> getUserCount();
 
-  List<AppMasterDto> findAppSiteInfoById(long id);
+  List<AppMasterDto> findAppMasterByUuid(UUID uuid);
 
-  boolean changeApplicationStatus(long userId, long appId);
+  boolean changeApplicationStatus(UUID userId, UUID appId);
 
   ResponseEntity<String> enableUser(String id);
 

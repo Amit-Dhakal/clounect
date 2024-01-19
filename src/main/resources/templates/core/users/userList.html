@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin</title>
+    <title>Users</title>
     <div th:replace="~{core/fragments/header :: common-header}"></div>
 
     <link rel="stylesheet" href="/css/userlink.css">
@@ -26,11 +26,9 @@
                         <div class="row row-margin-05">
 
                             <div class="col add-search-container">
-                                <a id="btnAdd" th:href="@{/add-user}" class="btn btn-light"><span
+                                <a id="btnAdd" th:href="@{/user/add}" class="btn btn-light"><span
                                         data-feather="plus"></span>&nbsp;Add Users</a>
-                                <div class="search-container">
-                                    <input type="text" id="searchInput" placeholder="Search by Name or Email"
-                                           class="search-bar">
+                                <div th:replace="~{core/fragments/search-common :: search-common(placeholder='Search By Email or Name', searchUrl='/user/search', query=${query})}">
                                 </div>
                             </div>
                         </div>
@@ -49,10 +47,14 @@
                                             <th scope="col">Enable/Disable</th>
                                             <th scope="col"></th>
                                             <th scope="col"></th>
+                                            <th scope="col"></th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:if="${userResponse != null}" th:each="user : ${userResponse.content}">
+                                        <tr th:if="${users == null || users.isEmpty()}">
+                                            <td colspan="9">ユーザーデータが見つかりません。</td>
+                                        </tr>
+                                        <tr th:if="${users != null}" th:each="user : ${users}">
                                             <td th:text="${user.id}"></td>
                                             <td th:text="${user.getShortName}"></td>
                                             <td th:text="${user.email}"></td>
@@ -68,12 +70,17 @@
                                                            style="background-color: white"
                                                                type="checkbox" id="LinkStart" th:checked="${user.isActive}"
                                                            th:data-user-id="${user.uuid}"/>
-
                                                 </div>
                                             </td>
                                             <td>
-                                                <a th:href="@{/{uuid}/editUser(uuid=${user.uuid})}"
-                                                   class="btn btn-primary">Update</a>
+                                                <a th:href="@{/user/{uuid}(uuid=${user.uuid})}" class="btn btn-success">View</a>
+                                                <a th:href="@{/user/{uuid}/edit(uuid=${user.uuid})}"
+                                                   class="btn btn-primary user-btn-update">Update</a>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/user/{uuid}/appSiteInfo(uuid=${user.uuid})}" class="btn btn-success">
+                                                    Applications
+                                                </a>
                                             </td>
                                             <td>
                                                 <form id="deleteForm" method="post">
@@ -82,11 +89,12 @@
                                                             data-feather="trash-2"></span>
                                                     </button>
                                                 </form>
-
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
+                                    <div th:replace="~{core/fragments/pagination :: common-paginator(pageData=${users}, pageUrl='/user')}">
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -103,6 +111,7 @@
 <div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
 <script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
 <div th:replace="~{core/fragments/loader :: common-loader}"></div>
+<div th:replace="~{core/fragments/search-common :: search-script}"></div>
 
 <script th:inline="javascript">
     feather.replace()
@@ -113,8 +122,10 @@
 
         let uuid = $(this).data('user-id');
         let isActive = $(this).prop('checked');
-        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
-        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+        let csrfToken = document.querySelector('meta[name="_csrf"]') ?
+            document.querySelector('meta[name="_csrf"]').content : "";
+        let csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
+            document.querySelector('meta[name="_csrf_header"]').content : "";
 
         let url = '/user/' + uuid + '/disable';
         if (isActive) {
@@ -186,19 +197,6 @@
         });
     });
 
-    $(document).ready(function () {
-        $("#searchInput").on("keyup", function () {
-            let value = $(this).val().toLowerCase();
-            $("#tblForm tbody tr").filter(function () {
-                // Select the "Name" and "Email" cells within the current row
-                let name = $(this).find("td:nth-child(2)").text().toLowerCase();
-                let email = $(this).find("td:nth-child(3)").text().toLowerCase();
-
-                // Toggle the visibility based on whether the search value is found in "Name" or "Email"
-                $(this).toggle(name.indexOf(value) > -1 || email.indexOf(value) > -1);
-            });
-        });
-    });
 </script>
 </body>
 </html>

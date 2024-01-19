@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.UUID;
 public interface AppMasterRepository extends JpaRepository<AppMaster, Long> {
 
   Optional<AppMaster> findByUuid(UUID uuid);
+
+  @Query("SELECT a FROM AppMaster a WHERE LOWER(a.name) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(a.vendorName) LIKE LOWER(CONCAT('%', :query, '%'))")
+  Page<AppMaster> findByNameOrVendorName(@Param("query") String query, Pageable pageable);
 
   boolean existsByUuid(UUID uuid);
 

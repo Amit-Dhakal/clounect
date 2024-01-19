@@ -44,16 +44,40 @@ public class AppMasterController {
 
   @GetMapping
   @Admin
-  public String getAppMasters(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page) {
+  public String getAppMasters(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("query") Optional<String> query) {
     log.info("Inside getAppMasters");
-    int currentPage = page.orElse(1) - 1;
-    Integer pageSize = defaultPageSize;
-    Pageable pageable = PageRequest.of(currentPage, pageSize);
-    Page<AppMasterDto> appMasterDtos = appMasterService.getAllAppMasters(pageable);
+    Pageable pageable = PaginationUtil.preparePaginationRequest(page, defaultPageSize);
+    Page<AppMasterDto> appMasterDtos = null;
+    String q = null;
+
+    if (query.isPresent() && !query.isEmpty()) {
+      q = query.get();
+      appMasterDtos = appMasterService.searchAppMaster(query.get(), pageable);
+    } else {
+      q = null;
+      appMasterDtos = appMasterService.getAllAppMasters(pageable);
+    }
+
+    mapListDataDetails(request, model, q, appMasterDtos);
+    return "core/appMaster/appMasterList";
+  }
+
+  @GetMapping("/search")
+  @Admin
+  public String searchAppMasters(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page, @NotEmpty @RequestParam("query") String query) {
+    log.info("Inside searchAppMasters");
+    log.info("page:: {}, query:: {}", page, query);
+    Pageable pageable = PaginationUtil.preparePaginationRequest(page, defaultPageSize);
+    Page<AppMasterDto> appMasterDtos = appMasterService.searchAppMaster(query, pageable);
+    mapListDataDetails(request, model, query, appMasterDtos);
+    return "core/appMaster/appMasterList";
+  }
+
+  private void mapListDataDetails(HttpServletRequest request, Model model, String query, Page<AppMasterDto> appMasterDtos) {
     PaginationUtil.addPaginationInfo(model, appMasterDtos);
+    model.addAttribute("query", query);
     model.addAttribute("appMasters", appMasterDtos);
     model.addAttribute("requestURI", request.getRequestURI());
-    return "core/appMaster/appMasterList";
   }
 
   @GetMapping(value="/{uuid}")
@@ -104,7 +128,7 @@ public class AppMasterController {
     try {
       appMasterService.updateAppMaster(uuid, appMasterDto);
     } catch (ResourceNotFoundException e) {
-      log.error("Error:: {}",e.getStackTrace());
+      log.error("Error:: {}",e);
       List<String > errorMessages = new ArrayList<>();
       errorMessages.add("Failed to update application.");
       redirectAttributes.addFlashAttribute("messages", errorMessages);
@@ -143,4 +167,5 @@ public class AppMasterController {
     appMasterService.enableDisableApp(uuid, false);
     return ResponseEntity.ok("App Disabled");
   }
+
 }

@@ -76,4 +76,19 @@ public class UserSetting {
 
     return Collections.emptyMap();
   }
+
+  /**
+   * <p>[概要] Webフックを取得するメソッド。</p>
+   * <p>[詳細] このメソッドは、アプリケーションで使用されるWebフックを返します。Webフックは外部サービスとの連携や通知のために利用されます。</p>
+   * <p>[メソッド名] getWebHook</p>
+   * <p>[戻り値] Webフックを表す文字列。</p>
+   * <p>[備考] 具体的なWebフックの詳細は、アプリケーションの実装によって異なる可能性があります。</p>
+   *
+   * @return Webフックを表す文字列。
+   * @since 1.0
+   */
+  public String getWebHook(){
+    Optional<AppSiteInfo> getAppSiteInfo = securityUtil.getExistingRecord();
+    return getAppSiteInfo.map(AppSiteInfo::getWebhookUrl).orElse(null);
+  }
 }

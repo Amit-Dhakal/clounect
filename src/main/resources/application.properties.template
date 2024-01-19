@@ -4,35 +4,16 @@ spring.datasource.password=postgres
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.hibernate.ddl-auto=update
 
-server.port=8090
+server.port=8080
 
 # web
-spring.data.web.pageable.default-page-size=1
+spring.data.web.pageable.default-page-size=10
 
 # Log4j2 Configuration
 logging.level.root=info
-
-# Rolling File Appender Configuration
-appender.rolling.type=RollingFile
-appender.rolling.name=RollingFile
-appender.rolling.fileName=logs/clounect.log
-appender.rolling.filePattern=logs/clounect-%d{MM-dd-yyyy}-%i.log
-appender.rolling.layout.type=PatternLayout
-appender.rolling.layout.pattern=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-
-# Size-Based Triggering Policy
-appender.rolling.policies.type=Policies
-appender.rolling.policies.size.type=SizeBasedTriggeringPolicy
-appender.rolling.policies.size.size=10MB
-
-# Rollover Strategy
-appender.rolling.strategy.type=DefaultRolloverStrategy
-appender.rolling.strategy.max=5
-
-# Root Logger Configuration
-logger.rolling.name=root
-logger.rolling.level=info
-logger.rolling.appenderRef.rolling.ref=RollingFile
+logging.file.name=/var/logs/clounect/clounect.log
+logging.logback.rollingpolicy.max-file-size=100MB
+logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
 
 #liquibase
 spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
@@ -45,14 +26,14 @@ spring.security.oauth2.client.clientSecret =
 spring.security.oauth2.client.registration.cognito.clientId =
 spring.security.oauth2.client.registration.cognito.clientSecret =
 spring.security.oauth2.client.registration.cognito.scope = openid
-spring.security.oauth2.client.registration.cognito.redirectUri = {baseUrl}/oauth2
+spring.security.oauth2.client.registration.cognito.redirectUri = https://<domain_name>/login/oauth2/code/cognito
 spring.security.oauth2.client.registration.cognito.clientName = clounect
 spring.security.oauth2.client.registration.cognito.authorizationGrantType=authorization_code
 spring.security.oauth2.client.userPoolId =
 spring.security.oauth2.client.userPoolRegion =
 spring.security.oauth2.client.provider.cognito.issuerUri = https://cognito-idp.<userPoolRegion>.amazonaws.com/<userPoolId>
 aws.cognito.logoutUrl=https://<clounetDomain>.auth.<userPoolRegion>.amazoncognito.com/logout
-aws.cognito.logout.success.redirectUrl=http://localhost:8080/
+aws.cognito.logout.success.redirectUrl=https://<domain_name>/
 
 #for google
 application.name = "google"

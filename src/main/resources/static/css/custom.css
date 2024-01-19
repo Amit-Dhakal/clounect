@@ -8,6 +8,8 @@
     border-radius: 5px;
     font-weight: bold;
     text-align: center;
+    line-height: 3vh;
+    width: 60%;
 }
 
 .success {
@@ -23,6 +25,7 @@ Pagination
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    float: right;
 }
 
 .pagination a {
@@ -107,4 +110,17 @@ Error blocks
 .has-error .error {
     color: #a94442;
     margin-bottom: 20px;
+}
+
+/*
+Search block
+ */
+.search-container {
+    float: right;
+}
+
+@media (max-width: 1521px) {
+    .userList button.user-btn-update {
+        margin-top: 10px;
+    }
 }

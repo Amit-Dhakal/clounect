@@ -27,4 +27,11 @@
             <column name="created_at" valueComputed="NOW()"/>
         </insert>
     </changeSet>
+
+    <changeSet id="20240118-19-15" author="FSZ">
+        <renameColumn tableName="app_site_info" oldColumnName="last_updated_at" newColumnName="updated_at" />
+        <renameColumn tableName="app_site_info" oldColumnName="last_updated_by" newColumnName="updated_by" />
+        <renameColumn tableName="app_usages_log" oldColumnName="last_updated_at" newColumnName="updated_at" />
+    </changeSet>
+
 </databaseChangeLog>

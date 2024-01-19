@@ -12,6 +12,8 @@ import java.util.List;
 public interface AppMasterService {
   Page<AppMasterDto> getAllAppMasters(Pageable pageable);
 
+  Page<AppMasterDto> searchAppMaster(String query, Pageable pageable);
+
   List<AppMasterDto> getAllActiveAppMasters();
 
   Page<AppMasterDto> getAllActiveAppMasters(Pageable pageable);

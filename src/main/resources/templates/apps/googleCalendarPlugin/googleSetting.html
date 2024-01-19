@@ -3,351 +3,280 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Feeler systemz inc.">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Clounect</title>
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        ul li {
-            text-decoration: none;
-            list-style: none;
-        }
-
-        .nav-item > a, .nav-item > span {
-            color: black;
-        }
-
-        .main-container {
-            display: flex;
-        }
-
-        .container-fluid {
-            flex: 2;
-        }
-
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-    </style>
-
-    <meta name="description" content="">
-    <meta name="author" content="Feeler Systemz Inc.">
-    <!-- <link rel="apple-touch-icon" sizes="180x180" href="../ico/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../ico/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../ico/favicon-16x16.png">
-    <link rel="manifest" href="../manifest.json">
-    <link rel="mask-icon" href="../ico/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff"> -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
-            integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
-            crossorigin="anonymous"></script>
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
 </head>
 <body>
-<div th:replace="~{core/fragments/header-section :: header-section}"></div>
-<div class="main-container">
-    <div th:replace="~{core/fragments/sidebar :: header}"></div>
-    <div class="container-fluid">
-        <div class="row">
-            <main class="col">
-                <!-- Modal -->
-                <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="messageModalLabel"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="messageModalBody">
-                            </div>
-                        </div>
+<div>
+    <div th:replace="~{core/fragments/loader :: common-loader}"></div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/sidebar :: sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h5">Googleカレンダー連携設定</h5>
                     </div>
-                </div>
 
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h5">Googleカレンダー連携設定</h5>
-                </div>
-
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h6">① JUST.SFA に WebHook を設定します</h5>
-                </div>
-                <div class="container-fluid">
-                    <div class="row row-margin-05">
-                        <div class="col">
-                            <label for="webhook-url" class><b>Webhookアドレス</b>： Webhook URL に以下のアドレスを設定してください</label>
-                            <input type="text" readonly class="form-control" id="webhook-url"
-                                   value="https://demo.mrcockpit.com/webhook/2bcfa023-c413-4375-8a76-ccf9bc1f094f">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">① JUST.SFA に WebHook を設定します</h5>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                <label for="webhook-url" class><b>Webhookアドレス</b>： Webhook URL に以下のアドレスを設定してください</label>
+                                <input type="text" readonly class="form-control" id="webhook-url"
+                                       th:value="${requestURI != null && webhook != null &&  requestURI +'/google/webhook/'+ webhook != null ?  requestURI +'/google/webhook/'+ webhook : ''}">
+                            </div>
+                            <div class="col-1 align-self-end">
+                                <button type="button" class="btn btn-light" id="webhook-url-copy"><span
+                                        data-feather="copy"></span></button>
+                            </div>
                         </div>
-                        <div class="col-1 align-self-end">
-                            <button type="button" class="btn btn-light" id="webhook-url-copy"><span
-                                    data-feather="copy"></span></button>
+                        <br/>
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                設定方法
+                                <ol>
+                                    <li>JUST.SFAに管理者権限のあるユーザーでログインします。</li>
+                                    <li>画面右上のユーザー名をクリックし、メニューから[データ管理画面]をクリックします。</li>
+                                    <li>データ管理画面の左側メニューから[データテーブル管理]をクリックします。</li>
+                                    <li>
+                                        データテーブル管理に表示されたテーブルの一覧から、連携するスケジュールを含むテーブルをダブルクリックします。
+                                    </li>
+                                    <li>
+                                        データテーブル設定画面が表示されますので、左側のメニューから[Webhook設定]をクリックします。
+                                    </li>
+                                    <li>[+ Webhook設定の追加]ボタンをクリックし、任意のタイトルを入力、Webhook URL に 上記の
+                                        <b>Webhookアドレス</b>を貼り付けます。</br>
+                                        [テスト送信]ボタンをクリックしてテスト送信が成功することを確認します。
+                                    </li>
+                                    <li>[レコードが新規作成された]、[レコードが更新された]、[レコードが削除された]にチェック入れます。<br/>
+                                        [保存]ボタンをクリックします。
+                                    </li>
+                                </ol>
+                            </div>
                         </div>
                     </div>
                     <br/>
-                    <div class="row row-margin-05">
-                        <div class="col">
-                            設定方法
-                            <ol>
-                                <li>JUST.SFAに管理者権限のあるユーザーでログインします。</li>
-                                <li>画面右上のユーザー名をクリックし、メニューから[データ管理画面]をクリックします。</li>
-                                <li>データ管理画面の左側メニューから[データテーブル管理]をクリックします。</li>
-                                <li>
-                                    データテーブル管理に表示されたテーブルの一覧から、連携するスケジュールを含むテーブルをダブルクリックします。
-                                </li>
-                                <li>
-                                    データテーブル設定画面が表示されますので、左側のメニューから[Webhook設定]をクリックします。
-                                </li>
-                                <li>[+ Webhook設定の追加]ボタンをクリックし、任意のタイトルを入力、Webhook URL に 上記の
-                                    <b>Webhookアドレス</b>を貼り付けます。</br>
-                                    [テスト送信]ボタンをクリックしてテスト送信が成功することを確認します。
-                                </li>
-                                <li>[レコードが新規作成された]、[レコードが更新された]、[レコードが削除された]にチェック入れます。<br/>
-                                    [保存]ボタンをクリックします。
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <br/>
 
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h6">② JUST.SFA に API-Key を設定します</h5>
-                </div>
-                <div class="container-fluid">
-                    <div class="row row-margin-05">
-                        <div class="col">
-                            設定方法
-                            <ol>
-                                <li>JUST.SFAに管理者権限のあるユーザーでログインします。</li>
-                                <li>画面右上のユーザー名をクリックし、メニューから[運用管理画面]をクリックします。</li>
-                                <li>運用管理画面の左側メニューから[API連携設定]をクリックします。</li>
-                                <li>API-Key管理の[+ API-Keyの追加]ボタンをクリックします。</li>
-                                <li>API-Keyの新規作成ダイアログが表示されますので、任意のタイトルを入力し、有効をチェックします。<br/>
-                                    [+ 対象テーブルの設定の追加]ボタンをクリックし、スケジュールフィールドを含むテーブルを選択します。<br/>
-                                    実行権限の閲覧、追加、編集、削除のすべてをチェックします。<br/>
-                                    [保存]ボタンをクリックします。
-                                </li>
-                                <li>表示された API-Key
-                                    の文字列をコピーしてメモ帳などに貼り付けておきます。次のステップで使用します。
-                                </li>
-                            </ol>
-                        </div>
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">② JUST.SFA に API-Key を設定します</h5>
                     </div>
-                </div>
-                <br/>
-
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h6">③ JUST.SFA の情報を登録します</h5>
-                </div>
-                <form>
                     <div class="container-fluid">
-                        下記の項目に JUST.SFA の情報を登録してください。<br/>すべて入力したら
-                        [登録して接続をテスト]ボタンをクリックしてテストを実施してください。<br/><br/>
                         <div class="row row-margin-05">
                             <div class="col">
-                                <label>テナント (JUST.SFA の URL https://oooo.justsfa.com の
-                                    ooooの部分）を入力 </label>
-                                <input type="text" class="form-control" id="tenant"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['tenant'] != null ? setting['justSfa']['tenant'] : ''}">
-                                       required>
+                                設定方法
+                                <ol>
+                                    <li>JUST.SFAに管理者権限のあるユーザーでログインします。</li>
+                                    <li>画面右上のユーザー名をクリックし、メニューから[運用管理画面]をクリックします。</li>
+                                    <li>運用管理画面の左側メニューから[API連携設定]をクリックします。</li>
+                                    <li>API-Key管理の[+ API-Keyの追加]ボタンをクリックします。</li>
+                                    <li>API-Keyの新規作成ダイアログが表示されますので、任意のタイトルを入力し、有効をチェックします。<br/>
+                                        [+ 対象テーブルの設定の追加]ボタンをクリックし、スケジュールフィールドを含むテーブルを選択します。<br/>
+                                        実行権限の閲覧、追加、編集、削除のすべてをチェックします。<br/>
+                                        [保存]ボタンをクリックします。
+                                    </li>
+                                    <li>表示された API-Key
+                                        の文字列をコピーしてメモ帳などに貼り付けておきます。次のステップで使用します。
+                                    </li>
+                                </ol>
                             </div>
-                        </div>
-                        <div class="row row-margin-05">
-                            <div class="col">
-                                <label for="api-key">ステップ②で控えたAPI-Key</label>
-                                <input type="text" class="form-control" id="api-key"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['api-key'] != null ? setting['justSfa']['api-key'] : ''}" required>
-                            </div>
-                        </div>tebleId
-                        <div class="row row-margin-05">
-                            <div class="col">
-                                <label
-                                        class>スケジュールフィールドを持つデータテーブル識別名を入力</label>
-                                <input type="text" class="form-control" id="teble-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['teble-id'] != null ? setting['justSfa']['teble-id'] : ''}">
-                                       required>
-                            </div>
-                            <div class="col">
-                            </div>
-                        </div>
-                        <div class="row row-margin-05">
-                            <div class="col">
-                                <label for="schedule-id">スケジュールフィールドを持つパネル識別名を入力</label>
-                                <input type="text" class="form-control" id="panel-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting.justSfa.get('panel-id') != null ? setting.justSfa.get('panel-id') : ''}" required>
-                            </div>
-                            <div class="col">
-                                <label>スケジュールのフィルタ識別名を入力</label>
-                                <input type="text" class="form-control" id="filter-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['filter-id'] != null ? setting['justSfa']['filter-id'] : ''}">
-                                       required>
-                            </div>
-                        </div>
-                        <div class="row row-margin-05">
-                            <div class="col">
-                                <label for="schedule-id">スケジュールフィールド識別名を入力</label>
-                                <input type="text" class="form-control" id="schedule-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['schedule-id'] != null ? setting['justSfa']['schedule-id'] : ''}">
-                                       required>
-                            </div>
-                            <div class="col">
-                                <label>見出しフィールド識別名を入力</label>
-                                <input type="text" class="form-control" id="subject-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['subject-id'] != null ? setting['justSfa']['subject-id'] : ''}">
-                            </div>
-                        </div>
-                        <div class="row row-margin-05">
-                            <div class="col">
-                                <label for="location-id">場所フィールド識別名を入力</label>
-                                <input type="text" class="form-control" id="location-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['location-id'] != null ? setting['justSfa']['location-id'] : ''}">
-                            </div>
-                            <div class="col">
-                                <label for="detail-id">内容フィールド識別名を入力</label>
-                                <input type="text" class="form-control" id="detail-id"
-                                       th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['detail-id'] != null ? setting['justSfa']['detail-id'] : ''}">
-                            </div>
-                        </div>
-                        <div class="row row-margin-10 mt-2">
-                            <div class="col">
-                                <button type="button" id="jsfa-contest" class="btn btn-success"
-                                        onclick="submitJustSfaForm()"><span
-                                        data-feather="check-square"></span>&nbsp;テスト完了（クリックして再テスト）
-                                </button>
-                                &nbsp;&nbsp;&nbsp;<span id="jsfa-contest-msg" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <br/>
-
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h6">④ Google OAuth クライアントID を作成します</h5>
-                </div>
-                <div class="container-fluid">
-                    <div class="row row-margin-05">
-                        <div class="col">
-                            <label class><b>リダイレクトURI</b>：Google OAuth クライアントID の
-                                承認済みのリダイレクトURI に以下のアドレスを設定してください </label>
-                            <input type="text" readonly class="form-control" id="redirect-uri"
-                                   value="https://demo.mrcockpit.com/rest/oauth2-credential/callback">
-                        </div>
-                        <div class="col-1 align-self-end">
-                            <button type="button" class="btn btn-light" id="redirect-uri-copy"><span
-                                    data-feather="copy"></span></button>
                         </div>
                     </div>
                     <br/>
-                    <div class="row row-margin-05">
-                        <div class="col">
-                            設定方法
-                            <ol>
-                                <li>Google管理者アカウントで Google Cloud プラットフォーム <a
-                                        href="https://console.cloud.google.com/cloud-resource-manager?hl=ja"
-                                        target="_blank">リソースの管理 <span data-feather="external-link"></span></a>
-                                    を開きます。
-                                </li>
-                                <li>リソースの管理画面で[+プロジェクトを作成]ボタンをクリックします。</li>
-                                <li>プロジェクト名に任意の名前を入力して[作成]ボタンをクリックします。</li>
-                                <li>Google Cloud プラットフォーム <a
-                                        href="https://console.cloud.google.com/home/dashboard"
-                                        target="_blank">ダッシュボード <span
-                                        data-feather="external-link"></span></a> を開きます。
-                                </li>
-                                <li>ページ上部の [選択元] プルダウン リストをクリックします。表示される [選択元]
-                                    ウィンドウで、先ほど作成したプロジェクトを選択します。
-                                </li>
-                                <li>画面左側メニューから [API とサービス]をクリックします。</li>
-                                <li>画面左側メニューから [OAuth 同意画面]をクリックします。</li>
-                                <li>User Type で [内部]をチェックして [作成]ボタンをクリックします。</li>
-                                <li>アプリ情報で 任意のアプリ名を入力し、ユーザーサポートメールに管理者のメールアドレスを入力します。<br/>
-                                    承認済みドメインの [+ ドメインの追加] をクリックして、「clonect.jp」を入力します。</br>
-                                    デベロッパーの連絡先情報に管理者のメールアドレスを入力します。
-                                    [保存して次へ]ボタンをクリックします。
-                                </li>
-                                <li>スコープの設定画面が表示されます。[保存して次へ]ボタンをクリックします。</li>
-                                <li>[ダッシュボードに戻る]ボタンをクリックします。<br/><br/></li>
-                                <li>ダッシュボード画面の左側メニューから [認証情報]をクリックします。</li>
-                                <li>画面上部の [+認証情報作成]ボタンをクリックします。表示されたメニューから [OAuth
-                                    クライアント
-                                    ID]をクリックします。
-                                </li>
-                                <li>アプリケーションの種類で [ウェブアプリケーション]を選択します。</li>
-                                <li>名前に任意の名前を入力します。</li>
-                                <li>認証済みリダイレクトURIで [+
-                                    URIを追加]ボタンをクリックし、上記に表示している<b>リダイレクトURI</b>を入力します。
-                                </li>
-                                <li>[作成]ボタンをクリックします。クライアントID と
-                                    クライアントシークレットは次のステップで使用しますのでダウンロードしておきます。
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <br/>
 
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h5 class="h6">⑤ Google OAuth クライアントID を登録します</h5>
-                </div>
-                <form>
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">③ JUST.SFA の情報を登録します</h5>
+                    </div>
+                    <form>
+                        <div class="container-fluid">
+                            下記の項目に JUST.SFA の情報を登録してください。<br/>すべて入力したら
+                            [登録して接続をテスト]ボタンをクリックしてテストを実施してください。<br/><br/>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label>テナント (JUST.SFA の URL https://oooo.justsfa.com の
+                                        ooooの部分）を入力 </label>
+                                    <input type="text" class="form-control" id="tenant"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['tenant'] != null ? setting['justSfa']['tenant'] : ''}">
+                                    required>
+                                </div>
+                            </div>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="api-key">ステップ②で控えたAPI-Key</label>
+                                    <input type="text" class="form-control" id="api-key"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['api-key'] != null ? setting['justSfa']['api-key'] : ''}" required>
+                                </div>
+                            </div>tebleId
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label
+                                            class>スケジュールフィールドを持つデータテーブル識別名を入力</label>
+                                    <input type="text" class="form-control" id="teble-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['teble-id'] != null ? setting['justSfa']['teble-id'] : ''}">
+                                    required>
+                                </div>
+                                <div class="col">
+                                </div>
+                            </div>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="schedule-id">スケジュールフィールドを持つパネル識別名を入力</label>
+                                    <input type="text" class="form-control" id="panel-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting.justSfa.get('panel-id') != null ? setting.justSfa.get('panel-id') : ''}" required>
+                                </div>
+                                <div class="col">
+                                    <label>スケジュールのフィルタ識別名を入力</label>
+                                    <input type="text" class="form-control" id="filter-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['filter-id'] != null ? setting['justSfa']['filter-id'] : ''}">
+                                    required>
+                                </div>
+                            </div>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="schedule-id">スケジュールフィールド識別名を入力</label>
+                                    <input type="text" class="form-control" id="schedule-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['schedule-id'] != null ? setting['justSfa']['schedule-id'] : ''}">
+                                    required>
+                                </div>
+                                <div class="col">
+                                    <label>見出しフィールド識別名を入力</label>
+                                    <input type="text" class="form-control" id="subject-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['subject-id'] != null ? setting['justSfa']['subject-id'] : ''}">
+                                </div>
+                            </div>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="location-id">場所フィールド識別名を入力</label>
+                                    <input type="text" class="form-control" id="location-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['location-id'] != null ? setting['justSfa']['location-id'] : ''}">
+                                </div>
+                                <div class="col">
+                                    <label for="detail-id">内容フィールド識別名を入力</label>
+                                    <input type="text" class="form-control" id="detail-id"
+                                           th:value="${setting != null && setting['justSfa'] != null && setting['justSfa']['detail-id'] != null ? setting['justSfa']['detail-id'] : ''}">
+                                </div>
+                            </div>
+                            <div class="row row-margin-10 mt-2">
+                                <div class="col">
+                                    <button type="button" id="jsfa-contest" class="btn btn-success"
+                                            onclick="submitJustSfaForm()"><span
+                                            data-feather="check-square"></span>&nbsp;テスト完了（クリックして再テスト）
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;<span id="jsfa-contest-msg" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <br/>
+
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">④ Google OAuth クライアントID を作成します</h5>
+                    </div>
                     <div class="container-fluid">
-                        ステップ④ で作成した クライアントID と クライアントシークレットを入力して、[登録してGoogle認証]ボタンで認証を実施します。<br/>
-                        必ず<b>Googleの管理者アカウント</b>で認証を行ってください。<br/><br/>
                         <div class="row row-margin-05">
                             <div class="col">
-                                <label for="client-id" class>OAuth クライアント ID</label>
-                                <input type="text" class="form-control" id="client-id"
-                                       th:value="${setting != null && setting['googleRecords'] != null && setting['googleRecords']['clientId'] != null ? setting['googleRecords']['clientId'] : ''}"
-                                       required>
+                                <label class><b>リダイレクトURI</b>：Google OAuth クライアントID の
+                                    承認済みのリダイレクトURI に以下のアドレスを設定してください </label>
+                                <input type="text" readonly class="form-control" id="redirect-uri"
+                                       th:value="${requestURI != null  &&  requestURI +'/google/oauth2/callback' != null ?  requestURI +'/google/oauth2/callback' : ''}">
                             </div>
-                            <div id="clientIdError" class="error-message form-field-error"></div>
+                            <div class="col-1 align-self-end">
+                                <button type="button" class="btn btn-light" id="redirect-uri-copy"><span
+                                        data-feather="copy"></span></button>
+                            </div>
                         </div>
+                        <br/>
                         <div class="row row-margin-05">
                             <div class="col">
-                                <label for="client-secret" class>クライアントシークレット</label>
-                                <input type="password" class="form-control" id="client-secret"
-                                       th:value="${setting != null && setting['googleRecords'] != null && setting['googleRecords']['clientSecret'] != null ? setting['googleRecords']['clientSecret'] : ''}" required>
-                            </div>
-                            <div id="clientSecretError" class="error-message form-field-error"></div>
-                        </div>
-                        <div class="row row-margin-10 mt-2">
-                            <div class="col">
-                                <button type="button" class="btn" id="google-contest"
-                                        onclick="authenticateWithGoogle(event)">
-                                    <span data-feather="check-square"></span>&nbsp;テスト完了（クリックして再テスト）
-                                </button>
+                                設定方法
+                                <ol>
+                                    <li>Google管理者アカウントで Google Cloud プラットフォーム <a
+                                            href="https://console.cloud.google.com/cloud-resource-manager?hl=ja"
+                                            target="_blank">リソースの管理 <span data-feather="external-link"></span></a>
+                                        を開きます。
+                                    </li>
+                                    <li>リソースの管理画面で[+プロジェクトを作成]ボタンをクリックします。</li>
+                                    <li>プロジェクト名に任意の名前を入力して[作成]ボタンをクリックします。</li>
+                                    <li>Google Cloud プラットフォーム <a
+                                            href="https://console.cloud.google.com/home/dashboard"
+                                            target="_blank">ダッシュボード <span
+                                            data-feather="external-link"></span></a> を開きます。
+                                    </li>
+                                    <li>ページ上部の [選択元] プルダウン リストをクリックします。表示される [選択元]
+                                        ウィンドウで、先ほど作成したプロジェクトを選択します。
+                                    </li>
+                                    <li>画面左側メニューから [API とサービス]をクリックします。</li>
+                                    <li>画面左側メニューから [OAuth 同意画面]をクリックします。</li>
+                                    <li>User Type で [内部]をチェックして [作成]ボタンをクリックします。</li>
+                                    <li>アプリ情報で 任意のアプリ名を入力し、ユーザーサポートメールに管理者のメールアドレスを入力します。<br/>
+                                        承認済みドメインの [+ ドメインの追加] をクリックして、「clonect.jp」を入力します。</br>
+                                        デベロッパーの連絡先情報に管理者のメールアドレスを入力します。
+                                        [保存して次へ]ボタンをクリックします。
+                                    </li>
+                                    <li>スコープの設定画面が表示されます。[保存して次へ]ボタンをクリックします。</li>
+                                    <li>[ダッシュボードに戻る]ボタンをクリックします。<br/><br/></li>
+                                    <li>ダッシュボード画面の左側メニューから [認証情報]をクリックします。</li>
+                                    <li>画面上部の [+認証情報作成]ボタンをクリックします。表示されたメニューから [OAuth
+                                        クライアント
+                                        ID]をクリックします。
+                                    </li>
+                                    <li>アプリケーションの種類で [ウェブアプリケーション]を選択します。</li>
+                                    <li>名前に任意の名前を入力します。</li>
+                                    <li>認証済みリダイレクトURIで [+
+                                        URIを追加]ボタンをクリックし、上記に表示している<b>リダイレクトURI</b>を入力します。
+                                    </li>
+                                    <li>[作成]ボタンをクリックします。クライアントID と
+                                        クライアントシークレットは次のステップで使用しますのでダウンロードしておきます。
+                                    </li>
+                                </ol>
                             </div>
                         </div>
                     </div>
-                </form>
-            </main>
+                    <br/>
+
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h5 class="h6">⑤ Google OAuth クライアントID を登録します</h5>
+                    </div>
+                    <form>
+                        <div class="container-fluid">
+                            ステップ④ で作成した クライアントID と クライアントシークレットを入力して、[登録してGoogle認証]ボタンで認証を実施します。<br/>
+                            必ず<b>Googleの管理者アカウント</b>で認証を行ってください。<br/><br/>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="client-id" class>OAuth クライアント ID</label>
+                                    <input type="text" class="form-control" id="client-id"
+                                           th:value="${setting != null && setting['googleRecords'] != null && setting['googleRecords']['clientId'] != null ? setting['googleRecords']['clientId'] : ''}"
+                                           required>
+                                </div>
+                                <div id="clientIdError" class="error-message form-field-error"></div>
+                            </div>
+                            <div class="row row-margin-05">
+                                <div class="col">
+                                    <label for="client-secret" class>クライアントシークレット</label>
+                                    <input type="password" class="form-control" id="client-secret"
+                                           th:value="${setting != null && setting['googleRecords'] != null && setting['googleRecords']['clientSecret'] != null ? setting['googleRecords']['clientSecret'] : ''}" required>
+                                </div>
+                                <div id="clientSecretError" class="error-message form-field-error"></div>
+                            </div>
+                            <div class="row row-margin-10 mt-2">
+                                <div class="col">
+                                    <button type="button" class="btn" id="google-contest"
+                                            onclick="authenticateWithGoogle(event)">
+                                        <span data-feather="check-square"></span>&nbsp;テスト完了（クリックして再テスト）
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </main>
+            </div>
         </div>
-    </div>
+    </section>
 </div>
 <input type="hidden" id="link_service" value="GOOGLE">
 <input type="hidden" id="cct_group_id" value="dx1cc02">
@@ -358,8 +287,7 @@
 <input type="hidden" id="cct_deleted" value="">
 <input type="hidden" id="cct_n8n_site" value="demo.mrcockpit.com">
 <input type="hidden" id="cct_n8n_site_id" value="DEMO">
-<br/>
-<br/>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -369,8 +297,10 @@
 <script>
     feather.replace()
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+    const csrfToken = document.querySelector('meta[name="_csrf"]') ?
+        document.querySelector('meta[name="_csrf"]').content : "";
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
+        document.querySelector('meta[name="_csrf_header"]').content : "";
 
     function checkRequiredInput(value, errorMessageId, errorMessage) {
         if (value.trim() === "") {

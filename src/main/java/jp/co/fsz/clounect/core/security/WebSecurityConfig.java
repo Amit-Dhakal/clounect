@@ -75,7 +75,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/google/**").permitAll()
                 .anyRequest().authenticated())
         .csrf((csrf) -> csrf
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .disable()
+//            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
         )
         .oauth2Login(
             oauth -> oauth

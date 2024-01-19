@@ -2,6 +2,8 @@ package jp.co.fsz.clounect.core.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jp.co.fsz.clounect.core.dto.AppMasterDto;
 import jp.co.fsz.clounect.core.dto.DashboardDto;
 import jp.co.fsz.clounect.core.exception.ResourceNotFoundException;
@@ -11,7 +13,11 @@ import jp.co.fsz.clounect.core.service.DashboardService;
 import jp.co.fsz.clounect.core.user.dto.UserDto;
 import jp.co.fsz.clounect.core.user.service.UserService;
 import jp.co.fsz.clounect.core.util.AppConstants;
+import jp.co.fsz.clounect.core.util.PaginationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +30,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * <p>[概 要] Controller コントローラー / エンドポイント REST API 処理クラス。</p>
@@ -37,28 +45,18 @@ import java.util.List;
  */
 @Slf4j
 @Controller
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
+
+  @Value("${spring.data.web.pageable.default-page-size}")
+  private Integer defaultPageSize;
 
   private final UserService userService;
 
-  private DashboardService dashboardService;
-
-  public UserController(UserService userService, DashboardService dashboardService) {
+  public UserController(UserService userService) {
     this.userService = userService;
-    this.dashboardService = dashboardService;
   }
 
-  @GetMapping
-  public String getDashboard(HttpServletRequest request, Model model) {
-    log.info("Inside getDashboard");
-    DashboardDto dashboardDto = dashboardService.prepareDashboard();
-    model.addAttribute("isAdmin", dashboardDto.isAdmin());
-    model.addAttribute("dashboardData", dashboardDto);
-    model.addAttribute("requestURI", request.getRequestURI());
-    log.info("uri:: {}", request.getRequestURI().toString());
-    return "core/dashboard";
-  }
 
   /**
    * <p>[概 要]サインアップ ユーザーの GetMapping REST API。</p>
@@ -70,7 +68,7 @@ public class UserController {
    * @since 1.0
    */
   @Admin
-  @GetMapping("add-user")
+  @GetMapping("/add")
   public String signUpForm(Model model) {
     model.addAttribute("user", new UserDto());
     model.addAttribute("title", "Add User");
@@ -89,10 +87,32 @@ public class UserController {
    * @since 1.0
    */
   @Admin
-  @PostMapping("add-user")
-  public String createUser(@Valid @ModelAttribute("user") UserDto userDto) {
+  @PostMapping("/add")
+  public String createUser(HttpServletRequest request, @Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
     userService.createUser(userDto);
-    return "redirect:/admin/dashboard";
+
+    if (bindingResult.hasErrors()) {
+      redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.appMasterDto",
+          bindingResult);
+      redirectAttributes.addFlashAttribute("user", userDto);
+      redirectAttributes.addFlashAttribute("requestURI", request.getRequestURI());
+      return "core/users/signupForm";
+    }
+
+    // Add the success message to the redirectAttributes
+    redirectAttributes.addFlashAttribute("successMessage", "Record Updated Successfully!!!");
+    return "redirect:/user";
+  }
+
+  @GetMapping(value="/{uuid}")
+  @Admin
+  public String getUserByUuid(HttpServletRequest request, Model model, @NotEmpty @NotNull @PathVariable String uuid) {
+    log.info("Inside getUserByUuid");
+    UserDto user = userService.getUserByUuid(uuid);
+    model.addAttribute("user", user);
+    model.addAttribute("requestURI", request.getRequestURI());
+
+    return "core/users/userView";
   }
 
   /**
@@ -106,7 +126,7 @@ public class UserController {
    * @since 1.0
    */
   @Admin
-  @GetMapping("{uuid}/editUser")
+  @GetMapping("/{uuid}/edit")
   public String editUser(Model model, @PathVariable String uuid) {
     UserDto user = userService.getUserByUuid(uuid);
     model.addAttribute("user", user);
@@ -123,24 +143,44 @@ public class UserController {
    * <p>[備 考] なし。</p>
    *
    * @param model     モデル,
-   * @param pageNo    ページ番号,
-   * @param pageSize  ページサイズ,
+   * @param page    ページ番号,
    * @param sortBy    並べ替え,
    * @param sortOrder 並べ替え順序,
    * @return 管理者ダッシュボード
    * @since 1.0
    */
   @Admin
-  @GetMapping("admin/dashboard")
-  public String getAllUsers(Model model,
-      @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFUALT_PAGE_NO, required = false) int pageNo,
-      @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFUALT_PAGE_SIZE, required = false) int pageSize,
-      @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFUALT_SORT_BY, required = false) String sortBy,
-      @RequestParam(value = "sortOrder", defaultValue = AppConstants.DEFUALT_SORT_DIRECTION, required = false) String sortOrder) {
+  @GetMapping
+  public String getAllUsers(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("sortBy") Optional<String> sortBy, @RequestParam("sortOrder") Optional<String> sortOrder, @RequestParam("query") Optional<String> query) {
+    Pageable pageable = PaginationUtil.preparePaginationRequest(page, defaultPageSize);
+    String q = null;
+    Page<UserDto> users = null;
 
-    var userResponse = userService.getAllUsers(pageNo, pageSize, sortBy, sortOrder);
-    model.addAttribute("userResponse", userResponse);
-    model.addAttribute("isAdmin", true);
+    if (query.isPresent() && !query.isEmpty()) {
+      q = query.get();
+      users = userService.searchUser(q, pageable);
+    } else {
+      q = null;
+      users = userService.getAllUsers(pageable);
+    }
+    mapListDataDetails(request, model, q, users);
+    return "core/users/userList";
+  }
+
+  private void mapListDataDetails(HttpServletRequest request, Model model, String query, Page<UserDto> users) {
+    PaginationUtil.addPaginationInfo(model, users);
+    model.addAttribute("users", users);
+    model.addAttribute("query", query);
+    model.addAttribute("requestURI", request.getRequestURI());
+  }
+
+  @Admin
+  @GetMapping("/search")
+  public String search(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("sortBy") Optional<String> sortBy, @RequestParam("sortOrder") Optional<String> sortOrder, @NotNull @RequestParam("query") String query) {
+    Pageable pageable = PaginationUtil.preparePaginationRequest(page, defaultPageSize);
+
+    Page<UserDto> users = userService.searchUser(query, pageable);
+    mapListDataDetails(request, model, query, users);
     return "core/users/userList";
   }
 
@@ -155,7 +195,7 @@ public class UserController {
    * @since 1.0
    */
   @Admin
-  @PostMapping("user/{uuid}/update")
+  @PostMapping("/{uuid}/update")
   public String updateUser(HttpServletRequest request,
      @Valid  @ModelAttribute("user") UserDto userDto, @PathVariable String uuid,
       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -172,7 +212,7 @@ public class UserController {
 
       userService.updateUser(userDto, uuid);
     } catch (ResourceNotFoundException e) {
-      log.error("Error: {}", e.getStackTrace());
+      log.error("Error: {}", e);
       List<String> errorMessages = new ArrayList<>();
       errorMessages.add("Failed to update User.");
       redirectAttributes.addFlashAttribute("messages", errorMessages);
@@ -183,7 +223,7 @@ public class UserController {
     redirectAttributes.addFlashAttribute("successMessage",
         "Record Updated Successfully!!!");
 
-    return "redirect:/admin/dashboard";
+    return "redirect:/user/"+ uuid;
   }
 
   /**
@@ -196,54 +236,81 @@ public class UserController {
    * @since 1.0
    */
   @Admin
-  @PostMapping("user/{uuid}/delete")
+  @PostMapping("/{uuid}/delete")
   public String deleteUser(@PathVariable String uuid) {
     userService.deleteUser(uuid);
     return "redirect:/admin/dashboard";
   }
-  @User
-  @GetMapping("/user/dashboard")
-  public String homepage(Model model) {
-    Authentication authentication = SecurityContextHolder.getContext()
-        .getAuthentication();
-    DefaultOidcUser defaultOidcUser = (DefaultOidcUser) authentication.getPrincipal();
-    String userEmail = defaultOidcUser.getEmail();
-    UserDto user = userService.findUserByEmail(userEmail);
-    model.addAttribute("user", user);
-    model.addAttribute("isAdmin", false);
 
-    return "core/users/index";
-  }
-
+  /**
+   * <p>[概要] ユーザーを無効にするための PostMapping REST API。 </p>
+   * <p>[詳細] ユーザーを無効にする API を提供します </p>
+   * <p>【注意事項】特にありません。 </p>
+   *
+   * @param uuid UUID、
+   * @return は成功した場合は無効なメッセージを返し、失敗した場合は例外を返します
+   * @since 1.0
+   */
   @Admin
-  @PostMapping("/user/{uuid}/disable")
+  @PostMapping("/{uuid}/disable")
   public ResponseEntity<String> disableUser(@PathVariable String uuid) {
     log.info("User with disabled with id :" + uuid);
     return userService.disableUser(uuid);
   }
 
+  /**
+   * <p>[概要] ユーザーを有効にするための PostMapping REST API。 </p>
+   * <p>[詳細] ユーザーを有効にするための API を提供します </p>
+   * <p>【注意事項】特にありません。 </p>
+   *
+   * @param uuid UUID、
+   * @return は成功した場合は有効なメッセージを返し、失敗した場合は例外を返します
+   * @since 1.0
+   */
   @Admin
-  @PostMapping("/user/{uuid}/enable")
+  @PostMapping("/{uuid}/enable")
   public ResponseEntity<String> enable(@PathVariable String uuid) {
     log.info("User with enabled with id :" + uuid);
     return userService.enableUser(uuid);
   }
 
+  /**
+   * <p>[概要] 管理ユーザーアプリケーションページに誘導するための GetMapping REST API。 </p>
+   * <p>[詳細] 管理ユーザーアプリケーションページを取得するための API を提供します </p>
+   * <p>【注意事項】特にありません。 </p>
+   *
+   * @param uuid    UUID、
+   * @param model モデル、
+   * @return 管理者ユーザー アプリケーション ページ
+   * @since 1.0
+   */
+
   @Admin
-  @GetMapping("/user/appSiteInfo/{id}")
-  public String getUserAppSiteInfo(@PathVariable long id, Model model) {
-    List<AppMasterDto> appMasterDtos  = userService.findAppSiteInfoById(id);
+  @GetMapping("/{uuid}/appSiteInfo")
+  public String getUserAppSiteInfo(@PathVariable UUID uuid, Model model) {
+    List<AppMasterDto> appMasterDtos  = userService.findAppMasterByUuid(uuid);
     model.addAttribute("appMasterDtos", appMasterDtos);
-    model.addAttribute("userId", id);
+    model.addAttribute("userId", uuid);
     model.addAttribute("isAdmin", true);
 
     return "core/users/adminUserApplication";
 
   }
 
+  /**
+   * <p>[概要] 管理者ユーザーアプリケーションのステータスを変更するための PostMapping REST API。 </p>
+   * <p>[詳細] ステータスを有効にした後に無効にしたり、その逆に変更したりするための API を提供します</p>
+   *<p>【注意事項】特にありません。 </p>
+   *
+   * @param userId ユーザーID、
+   * @param appId アプリID、
+   * @param model モデル、
+   * @return 管理者ユーザー アプリケーション ページ
+   * @since 1.0
+   */
   @Admin
-  @PostMapping("/change/application/status/{userId}/{appId}")
-  public String changeApplicationStatus(@PathVariable long userId, @PathVariable long appId , Model model) {
+  @PostMapping("change/application/{userId}/{appId}/status")
+  public String changeApplicationStatus(@PathVariable UUID userId, @PathVariable UUID appId , Model model) {
     userService.changeApplicationStatus(userId, appId);
     model.addAttribute("isAdmin", true);
 

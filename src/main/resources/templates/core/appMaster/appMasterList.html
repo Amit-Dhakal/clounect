@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin</title>
+    <title>Applications</title>
     <div th:replace="~{core/fragments/header :: common-header}"></div>
     <link rel="stylesheet" href="/css/appMaster.css">
 
@@ -26,7 +26,11 @@
                                         <h5 class="h5">APP MASTER LIST</h5>
                                     </div>
 
+                                    <div th:replace="~{core/fragments/search-common :: search-common(placeholder='Search By Name or Vendor', searchUrl='/app-master/search', query=${query})}">
+                                    </div>
+
                                     <table id="tblForm" class="table rownum-table">
+
                                         <thead>
                                         <tr>
                                             <th scope="col">ID</th>
@@ -40,6 +44,9 @@
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        <tr th:if="${appMasters == null || appMasters.isEmpty()}">
+                                            <td colspan="8">アプリが見つかりません。</td>
+                                        </tr>
                                         <tr th:each="appMasterDto : ${appMasters}">
                                             <td th:text="${appMasterDto.id}"></td>
                                             <td th:text="${appMasterDto.name}"></td>
@@ -52,7 +59,7 @@
                                                            data-offstyle="danger"
                                                            style="background-color: white"
                                                            type="checkbox" th:checked="${appMasterDto.isActive}"
-                                                           th:data-app-id="${appMasterDto.uuid}"/>
+                                                           th:data-app-id="${appMasterDto.uuid}" onchange="openConfirmationModal(this)"/>
                                                 </div>
                                             </td>
                                             <td>
@@ -64,17 +71,17 @@
                                         </tr>
                                         </tbody>
                                     </table>
-                                <div th:replace="~{/core/fragments/pagination :: common-paginator(pageData=${appMasters}, pageUrl='/app-master')}">
+                                <div th:replace="~{core/fragments/pagination :: common-paginator(pageData=${appMasters}, pageUrl='/app-master')}">
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </main>
             </div>
         </div>
     </section>
 </div>
+<script th:replace="~{core/fragments/search-common :: search-script}"></script>
 <div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
 <script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
 <div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
@@ -83,74 +90,74 @@
 <script>
     feather.replace()
 
-    function deleteRequest(formId) {
-        console.log(formId)
+    function openConfirmationModal(element) {
+        let isActive = $(element).prop('checked');
 
-        // Proceed with the form submission
-        document.getElementById(formId).submit();
-    }
-
-    function openConfirmationModal(formId) {
-        console.log(formId)
-
-        openModal("削除の確認", "アプリケーションを削除します。 大丈夫ですか？<br/><br/>\n" +
-            "※アプリケーションを削除すると、すべてのユーザーがすべてのアプリケーションを使用できなくなります。", function () {
-            deleteRequest(formId);
-        });
-    }
-
-    function toggleAppStatus() {
-        $('.loader-overlay').removeClass('hidden');
-        let $this = $(this).off("change", toggleAppStatus);
-
-        let uuid = $(this).data('app-id');
-        let isActive = $(this).prop('checked');
-        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
-        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-        let url = '/app-master/' + uuid + '/disable';
         if (isActive) {
-            url = '/app-master/' + uuid + '/enable';
+            openModal("無効にしますか？", "すべてのユーザーに対してアプリケーションを無効にします。 " +
+                "アプリケーションを無効にしますか? 他のユーザーがこのアプリケーションを使用している可能性があります。 <br/>",
+                toggleAppStatus)
+        } else {
+            openModal("有効にする？", "すべてのユーザーにアプリケーションを有効にします。 " +
+                "アプリケーションを有効にしますか? すべてのユーザーがこのアプリケーションを使用できるようになります <br/>",
+                toggleAppStatus)
         }
-        $.ajax({
-            type: 'POST',
-            url: url,
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
-            success: function(response) {
-                $('.loader-overlay').addClass('hidden');
-                console.log(response)
-                if (isActive) {
-                    flashMessage("成功", "アプリケーションは正常に有効になりました" , 0, null, 'info')
-                } else {
-                    flashMessage("成功", "アプリケーションは正常に無効になりました" , 0, null, 'info')
-                }
 
-                //Re-attach event
-                $this.change(toggleAppStatus);
-            },
-            error: function() {
-                $('.loader-overlay').addClass('hidden');
-                if (isActive) {
-                    flashMessage("有効化に失敗しました", "アプリケーションを有効にできませんでした" , 0);
-                    $this.bootstrapToggle('off');
-                } else {
-                    flashMessage("無効化に失敗しました", "アプリケーションを無効にできませんでした" , 0);
-                    $this.bootstrapToggle('on');
-                }
+        function toggleAppStatus() {
+            $('.loader-overlay').removeClass('hidden');
+            let $this = $(element).off("change", toggleAppStatus);
 
-                // Reset checkbox state if the request fails
-                $('.enable-disable-app[data-app-id="' + uuid + '"]').prop('checked', !isActive);
+            let uuid = $(element).data('app-id');
+            let csrfToken = document.querySelector('meta[name="_csrf"]') ?
+                document.querySelector('meta[name="_csrf"]').content : '';
+            let csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
+                document.querySelector('meta[name="_csrf_header"]').content : '';
 
-                //Re-attach event
-                $this.change(toggleAppStatus);
+            let url = '/app-master/' + uuid + '/disable';
+            if (isActive) {
+                url = '/app-master/' + uuid + '/enable';
             }
-        });
-    }
+            $.ajax({
+                type: 'POST',
+                url: url,
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                success: function (response) {
+                    $('.loader-overlay').addClass('hidden');
+                    console.log(response)
+                    if (isActive) {
+                        flashMessage("成功", "アプリケーションは正常に有効になりました", 0, null, 'info')
+                    } else {
+                        flashMessage("成功", "アプリケーションは正常に無効になりました", 0, null, 'info')
+                    }
 
-    $('.enable-disable-app').change(toggleAppStatus);
+                    //Re-attach event
+                    $this.change(toggleAppStatus);
+                    location.reload()
+                },
+                error: function () {
+                    $('.loader-overlay').addClass('hidden');
+                    if (isActive) {
+                        flashMessage("有効化に失敗しました", "アプリケーションを有効にできませんでした", 0);
+                        $this.bootstrapToggle('off');
+                    } else {
+                        flashMessage("無効化に失敗しました", "アプリケーションを無効にできませんでした", 0);
+                        $this.bootstrapToggle('on');
+                    }
+
+                    // Reset checkbox state if the request fails
+                    $('.enable-disable-app[data-app-id="' + uuid + '"]').prop('checked', !isActive);
+
+                    //Re-attach event
+                    $(element).change(toggleAppStatus);
+                }
+            });
+        }
+
+        $(element).change(toggleAppStatus);
+    }
 
 </script>
 </body>

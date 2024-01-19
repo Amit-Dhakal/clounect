@@ -44,6 +44,8 @@ public class GoogleHomeController {
   public String googleSetting(HttpServletRequest request, Model model) {
     model.addAttribute("isAdmin", false);
     model.addAttribute("setting",userSetting.getConfig());
+    model.addAttribute("requestURI", request.getRequestURL().toString().replace(request.getRequestURI(), ""));
+    model.addAttribute("webhook", userSetting.getWebHook());
     return "apps/googleCalendarPlugin/googleSetting";
   }
 

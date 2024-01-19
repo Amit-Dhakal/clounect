@@ -211,10 +211,10 @@ public class GoogleController {
    * @param uuid Google イベントを処理するための UUID
    * @since 1.0
    */
-  @PostMapping("/google/{uuid}")
+  @PostMapping("/webhook/{uuid}")
   public void event(@RequestBody List<Map<String, Object>> data,
       @PathVariable String uuid) {
-
+    log.info("webhook/" + uuid);
     checkType.getPlayLoad(data, uuid);
   }
 }

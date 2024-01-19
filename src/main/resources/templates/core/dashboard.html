@@ -24,8 +24,10 @@
 <div>
     <header th:replace="~{core/fragments/header-section :: header-section}"></header>
     <section class="vh-100">
-        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar" sec:authorize="hasRole('ROLE_ADMIN')"
              th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar" sec:authorize="not hasRole('ROLE_ADMIN')"
+             th:replace="~{core/fragments/sidebar :: sidebar}"></nav>
 
         <div class="container-fluid">
             <div class="row">
@@ -44,6 +46,8 @@
                                     お名前：<span th:text="${dashboardData.name}"></span><br/>
                                     住所：<span th:text="${dashboardData.address}"></span> <br/>
                                     <br />
+                                </div>
+                                <div sec:authorize="hasRole('ROLE_ADMIN')">>
                                     月間連携ユーザー数：<span id="month_user" th:text="${dashboardData.totalUsers}"></span><br/>
                                     月間カレンダー連携実行数： <span id="git p">10 件 (うち失敗 3 件)</span><br />
                                 </div>

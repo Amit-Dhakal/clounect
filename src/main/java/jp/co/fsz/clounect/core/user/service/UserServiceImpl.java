@@ -2,7 +2,6 @@ package jp.co.fsz.clounect.core.user.service;
 
 import jp.co.fsz.clounect.core.dto.AppMasterDto;
 import jp.co.fsz.clounect.core.dto.AppSiteInfoDto;
-import jp.co.fsz.clounect.core.dto.UserResponse;
 import jp.co.fsz.clounect.core.exception.ResourceNotFoundException;
 import jp.co.fsz.clounect.core.exception.UserAlreadyExistsException;
 import jp.co.fsz.clounect.core.model.AppMaster;
@@ -10,6 +9,7 @@ import jp.co.fsz.clounect.core.model.AppSiteInfo;
 import jp.co.fsz.clounect.core.repository.AppMasterRepository;
 import jp.co.fsz.clounect.core.repository.AppSiteInfoRepository;
 import jp.co.fsz.clounect.core.repository.projections.UserStat;
+import jp.co.fsz.clounect.core.service.AppSiteInfoService;
 import jp.co.fsz.clounect.core.service.AwsCognitoService;
 import jp.co.fsz.clounect.core.user.dto.UserDto;
 import jp.co.fsz.clounect.core.user.entity.User;
@@ -18,9 +18,7 @@ import jp.co.fsz.clounect.core.user.role.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -59,14 +57,17 @@ public class UserServiceImpl implements UserService {
 
   private final AppMasterRepository appMasterRepo;
 
+  private final AppSiteInfoService appSiteInfoService;
+
   public UserServiceImpl(UserRepo userRepo, AwsCognitoService awsCognitoService,
       AppSiteInfoRepository appSiteInfoRepo, @Lazy UserService userService,
-      AppMasterRepository appMasterRepo) {
+      AppMasterRepository appMasterRepo, AppSiteInfoService appSiteInfoService) {
     this.userRepo = userRepo;
     this.awsCognitoService = awsCognitoService;
     this.appSiteInfoRepo = appSiteInfoRepo;
     this.userService = userService;
     this.appMasterRepo = appMasterRepo;
+    this.appSiteInfoService = appSiteInfoService;
   }
 
   /**
@@ -179,27 +180,25 @@ public class UserServiceImpl implements UserService {
    * <p>[詳 細] このメソッドはデータベースからすべてのユーザーを提供します。</p>
    * <p>[備 考] なし。</p>
    *
-   * @param pageNo    ページ番号
-   * @param pageSize  ページサイズ
-   * @param sortBy    並べ替え
-   * @param sortOrder 並べ替え順序
+   * @param pageable
    * @since 17.0
    */
   @Override
-  public UserResponse getAllUsers(int pageNo, int pageSize, String sortBy,
-      String sortOrder) {
+  public Page<UserDto> getAllUsers(Pageable pageable) {
+    return userRepo.findAll(pageable).map(this:: convertToDto);
+  }
 
-    Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy)
-        .ascending() : Sort.by(sortBy).descending();
-
-    Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-    Page<User> users = userRepo.findAll(pageable);
-    List<User> listOfUsers = users.getContent();
-    List<UserDto> contents = listOfUsers.stream().map(this::convertToDto).toList();
-
-    return UserResponse.builder().content(contents).pageNo(users.getNumber())
-        .pageSize(users.getSize()).totalElements(users.getTotalElements())
-        .totalPages(users.getTotalPages()).build();
+  /**
+   * <p>[概 要] ユーザーを検索します。</p>
+   * <p>[詳 細] 名前または電子メールがクエリ パラメータに一致するシステム内のユーザーを検索します。</p>
+   *
+   * @param query
+   * @param pageable
+   * @since 17.0
+   */
+  @Override
+  public Page<UserDto> searchUser(String query, Pageable pageable) {
+    return userRepo.findByNameOrEmail(query, pageable).map(this:: convertToDto);
   }
 
   @Override
@@ -331,6 +330,7 @@ public class UserServiceImpl implements UserService {
     return UserDto.builder().id(user.getId()).uuid(user.getUuid()).shortName(user.getShortName())
         .email(user.getEmail()).companyName(user.getCompanyName())
         .phone(user.getContactNumber()).address(user.getAddress())
+        .role(user.getRole())
         .createdAt(user.getCreatedAt()).isActive(user.getIsActive())
         .updatedAt(user.getUpdatedAt()).build();
   }
@@ -352,9 +352,18 @@ public class UserServiceImpl implements UserService {
 
   }
 
+  /**
+   * <p>[概要] AppMaster を ID で検索します。 </p>
+   * <p>【詳細】このメソッドはappSiteInfoからフィルタリングしてアプリマスターを検索するサービス実装です。</p>
+   * *<p>【注意事項】 特になし。 </p>
+   *
+   * @param uuid UUID
+   * @return appMasterのリスト
+   * @since 1.0
+   */
   @Override
-  public List<AppMasterDto> findAppSiteInfoById(long id) {
-    User user = findUserById(id);
+  public List<AppMasterDto> findAppMasterByUuid(UUID uuid) {
+    User user = findUserByUuid(String.valueOf(uuid));
     List<AppMasterDto> appMasterDtos = new ArrayList<>();
     if (user != null) {
       List<AppSiteInfo> appSiteInfoEntityList = appSiteInfoRepo.findByUserIdAndAndIsActiveTrue(
@@ -380,10 +389,20 @@ public class UserServiceImpl implements UserService {
     return appMasterDtos;
   }
 
+  /**
+   * <p>[概要]ユーザーのアプリケーションの状態を変更します。 </p>
+   * <p>[詳細] このメソッドは、有効から無効、またはその逆の場合にステータスを変更するためのサービス実装です。</p>
+   *<p>【注意事項】特にありません。 </p>
+   *
+   * @param userId ユーザーID
+   * @param appId アプリID
+   * @return ブール値
+   * @since 1.0
+   */
   @Override
-  public boolean changeApplicationStatus(long userId, long appId) {
-    Optional<AppMaster> appMaster = appMasterRepo.findById(appId);
-    Optional<User> user = userRepo.findById(userId);
+  public boolean changeApplicationStatus(UUID userId, UUID appId) {
+    Optional<AppMaster> appMaster = appMasterRepo.findByUuid(appId);
+    Optional<User> user = userRepo.findByUuid(userId);
 
     if (appMaster.isPresent() && user.isPresent()) {
 
@@ -407,7 +426,7 @@ public class UserServiceImpl implements UserService {
         newAppSiteInfoEntity.setUserId(mainUser);
         newAppSiteInfoEntity.setIsActive(true);
 
-        appSiteInfoRepo.save(newAppSiteInfoEntity);
+        appSiteInfoService.save(newAppSiteInfoEntity);
 
       } else if (appSiteInfoEntity.getIsActive()) {
         appSiteInfoEntity.setIsActive(false);

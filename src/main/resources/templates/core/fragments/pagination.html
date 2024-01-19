@@ -12,28 +12,28 @@
 
 <div class="pagination" th:fragment="common-paginator">
     <span th:if="${pageData.hasPrevious()}">
-     <a th:href="@{${pageUrl}(page=${pageData.previousPageable().pageNumber + 1})}">&lt;&lt; Previous</a>
+     <a th:href="@{${pageUrl}(page=${pageData.previousPageable().pageNumber + 1}, query=${query})}">&lt;&lt; Previous</a>
    </span>
 
     <!-- Display start link if current page > 2 -->
     <span th:if="${pageData.number > 2}">
-        <a th:href="@{${pageUrl}(page=1)}">Start</a>
+        <a th:href="@{${pageUrl}(page=1, query=${query})}">Start</a>
     </span>
 
     <span th:each="pageNumber : ${#numbers.sequence(pageData.number - 1, pageData.number + 3)}" th:if="${pageNumber >= 1 and pageNumber <= pageData.totalPages}">
         <span th:if="${pageData.number + 1 == pageNumber}" th:text="${pageNumber}"></span>
         <span th:unless="${pageData.number + 1 == pageNumber}">
-            <a th:href="@{${pageUrl}(page=${pageNumber})}" th:text="${pageNumber}"></a>
+            <a th:href="@{${pageUrl}(page=${pageNumber}, query=${query})}" th:text="${pageNumber}"></a>
         </span>
     </span>
 
     <!-- Display end link if current page < totalPages - 3 -->
     <span th:if="${pageData.number < pageData.totalPages - 2}">
-        <a th:href="@{${pageUrl}(page=${pageData.totalPages})}">End</a>
+        <a th:href="@{${pageUrl}(page=${pageData.totalPages}, query=${query})}">End</a>
     </span>
 
     <span th:if="${pageData.hasNext()}">
-        <a th:href="@{${pageUrl}(page=${pageData.nextPageable().pageNumber + 1})}">Next &gt;&gt;</a>
+        <a th:href="@{${pageUrl}(page=${pageData.nextPageable().pageNumber + 1}, query=${query})}">Next &gt;&gt;</a>
     </span>
 </div>
 

@@ -10,8 +10,10 @@
 <div>
   <header th:replace="~{core/fragments/header-section :: header-section}"></header>
   <section class="vh-100">
-    <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+    <nav id="sidebarMenu" class="d-md-block bg-light sidebar" sec:authorize="hasRole('ROLE_ADMIN')"
          th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+    <nav id="sidebarMenu" class="d-md-block bg-light sidebar" sec:authorize="not hasRole('ROLE_ADMIN')"
+         th:replace="~{core/fragments/sidebar :: sidebar}"></nav>
 
     <h1> User App Management</h1>
     <br/>

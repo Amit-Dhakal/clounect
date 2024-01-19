@@ -2,18 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{base-template}"
 >
 <body>
     <div th:fragment="common-header">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="/img/favicon.ico" id="favicon">
+        <link rel="icon" href="/favicon.ico" id="favicon">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="description" content="">
         <meta name="author" content="Feeler Systemz Inc.">
-        <meta name="_csrf" th:content="${_csrf.token}"/>
-        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <meta name="_csrf" th:if="${_csrf != null && _csrf.token != null}" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:if="${_csrf != null && _csrf.headerName != null}" th:content="${_csrf.headerName}"/>
         <!-- <link rel="apple-touch-icon" sizes="180x180" href="<?=$layer_dir?>ico/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="<?=$layer_dir?>ico/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="<?=$layer_dir?>ico/favicon-16x16.png">

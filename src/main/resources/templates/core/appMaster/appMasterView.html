@@ -30,6 +30,11 @@
                                             <li th:text="${message}" class="ui error message" />
                                         </ul>
                                     </div>
+                                    <div class="flash-message" th:if="${successMessage}">
+                                        <ul th:each="message : ${successMessage}">
+                                            <li th:text="${message}" class="ui success message" />
+                                        </ul>
+                                    </div>
 
                                     <table cellpadding="10">
                                         <tr>

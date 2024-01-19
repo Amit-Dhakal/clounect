@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base-template}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="search-container" th:fragment="search-common">
+  <input type="text" id="searchInput" th:value="${query}" th:placeholder="${placeholder}" class="search-bar" th:data-url="${searchUrl}">
+  <button id="btnSearch" class="btn btn-light" >
+    <span data-feather="search"></span>&nbsp;
+  </button>
+</div>
+
+<script th:fragment="search-script">
+    $('#btnSearch').on('click', function() {
+        if ($("#searchInput").val().trim())
+            search();
+    });
+
+    $('#searchInput').on('keyup', function(event) {
+        if (event.keyCode === 13) {
+            search();
+        }
+    });
+
+    function search() {
+        if ($("#searchInput").val().trim()) {
+            let searchInput = $("#searchInput");
+            let query = searchInput.val();
+            let url = searchInput.attr("data-url");
+            let searchUrl = url + "?query=" + encodeURIComponent(query);
+
+            // Redirecting to search
+            window.location.href = searchUrl;
+        }
+    }
+</script>
+
+</body>
+</html>

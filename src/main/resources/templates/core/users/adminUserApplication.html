@@ -48,8 +48,8 @@
                                                            data-toggle="toggle" data-onstyle="success"
                                                            data-offstyle="danger"
                                                            style="background-color: white"
-                                                           type="checkbox" th:checked="${appMaster.isActive}"
-                                                           th:data-app-id="${appMaster.id}"/>
+                                                           type="checkbox" th:checked="${appMaster.userStatus}"
+                                                           th:data-app-id="${appMaster.uuid}"/>
                                                 </div>
                                             </td>
                                         </tr>
@@ -71,16 +71,20 @@
 <script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
 
 <script th:inline="javascript">
+    feather.replace()
+
     function toggleAppStatus() {
         $('.loader-overlay').removeClass('hidden');
         let $this = $(this).off("change", toggleAppStatus);
 
         let appId = $(this).data('app-id');
         let isActive = $(this).prop('checked');
-        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
-        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-        let url = "/change/application/status/[[${userId}]]/" + appId
+        let csrfToken = document.querySelector('meta[name="_csrf"]') ?
+            document.querySelector('meta[name="_csrf"]').content : '';
+        let csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
+            document.querySelector('meta[name="_csrf_header"]').content : '';
+        let userId = [[${userId}]]
+        let url = "/user/change/application/" + userId + "/" + appId + "/status"
 
         $.ajax({
             type: 'POST',
@@ -123,39 +127,6 @@
     $('.enable-disable-app').change(toggleAppStatus);
 
 </script>
-
-<!--<script th:inline="javascript">-->
-<!--    feather.replace()-->
-<!--    let csrfToken = document.querySelector('meta[name="_csrf"]').content;-->
-<!--    let csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;-->
-
-<!--    $(document).ready(function () {-->
-<!--        $("#flexSwitchCheckDefault").on("change", function () {-->
-
-<!--            let userStatus = $(this).is(":checked");-->
-<!--            let appId = $(this).data('app-id');-->
-
-<!--            $.ajax({-->
-<!--                type: "POST",-->
-<!--                url: "/change/application/status/[[${userId}]]/" + appId ,-->
-<!--                data: {userStatus: userStatus},-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json',-->
-<!--                    [csrfHeader]: csrfToken-->
-<!--                },-->
-<!--                success: function (response) {-->
-<!--                    // Handle success (if needed)-->
-<!--                    console.log(response);-->
-<!--                },-->
-<!--                error: function (error) {-->
-<!--                    // Handle error (if needed)-->
-<!--                    alert("Error changing the status")-->
-<!--                    console.error(error);-->
-<!--                }-->
-<!--            });-->
-<!--        });-->
-<!--    });-->
-<!--</script>-->
 
 </body>
 </html>

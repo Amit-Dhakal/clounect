@@ -1,7 +1,10 @@
 package jp.co.fsz.clounect.core.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -10,6 +13,9 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "app_master")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class AppMaster extends AuditableEntity {
 
   @Id

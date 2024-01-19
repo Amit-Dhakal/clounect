@@ -56,24 +56,27 @@ public class JsonDataOptimizationService {
    * @since 1.0
    */
   public Map<String, Object> processGoogleCalendarRecords(
-      List<Map<String, Object>> jsonData) {
+      Map<String, Object> jsonData) {
     Event constructedEvent = null;
     List<String> attendees = new ArrayList<>();
     String type = null;
+    Integer recordId = null;
 
-    for (Map<String, Object> requestData : jsonData) {
       try {
-        String bodyJson = objectMapper.writeValueAsString(requestData.get(bodyData));
+        String bodyJson = objectMapper.writeValueAsString(jsonData);
         Map<String, Object> body = objectMapper.readValue(bodyJson,
             new TypeReference<>() {
             });
 
         
         type = (String) body.get("type");
+        recordId =  (Integer) body.get("recordId");
         Map<String, Object> record = castMap(body.get(recordData));
 
         Map<String, Object> participantsAndDate = castMap(
             record.get(participantsAndDateData));
+
+        //TODO: get user id, search in db and map email
         List<List<String>> participants = castList(
             participantsAndDate.get(participantsData));
 
@@ -125,12 +128,13 @@ public class JsonDataOptimizationService {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
-    }
+
 
     Map<String, Object> result = new HashMap<>();
     result.put("event", constructedEvent);
     result.put("participants", convertToEventAttendees(attendees));
     result.put("type", type);
+    result.put("recordId", recordId);
     return result;
   }
 
@@ -147,7 +151,8 @@ public class JsonDataOptimizationService {
   private List<EventAttendee> convertToEventAttendees(List<String> attendees) {
     List<EventAttendee> eventAttendees = new ArrayList<>();
     for (String attendee : attendees) {
-      eventAttendees.add(new EventAttendee().setEmail(attendee));
+      //TODO: Remove later
+      eventAttendees.add(new EventAttendee().setEmail("admin@chocodx.site"));
     }
     return eventAttendees;
   }
@@ -164,7 +169,6 @@ public class JsonDataOptimizationService {
   private void printDebugInfo(Event constructedEvent, List<List<String>> participants) {
     log.info("Debug: Participants - " + participants);
     log.info("Google Calendar Format: \n" + constructedEvent);
-    participants.forEach(System.out::println);
   }
 
   /**

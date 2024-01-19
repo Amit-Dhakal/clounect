@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.api.services.calendar.model.Event;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import jp.co.fsz.clounect.core.dto.AppDataDto;
 import jp.co.fsz.clounect.core.dto.AppSiteInfoDto;
 import jp.co.fsz.clounect.core.model.AppData;
 import jp.co.fsz.clounect.core.model.AppSiteInfo;
@@ -21,10 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>[概要] Google Record サービス クラス。</p>
@@ -222,46 +220,6 @@ public class GoogleRecordService {
       appSiteInfo.setWebhookUrl(appSiteInfo.getWebhookUrl());
       appSiteInfo.setConfig(gson.toJson(configMap));
       appSiteInfoRepo.save(appSiteInfo);
-    }
-  }
-
-  /**
-   * 指定されたイベントデータを受信したときに、関連するアプリケーションサイトにデータを追加します。
-   *
-   * @param createdData 受信したイベントデータ。
-   * @param appSiteId アプリケーションサイトの識別子。
-   * @throws JsonProcessingException データの追加プロセス中にエラーが発生した場合。
-   * @since 1.0
-   */
-  public void appendReceivedPayload(Event createdData, Long appSiteId) {
-    String receivedData = String.valueOf(createdData);
-    Optional<AppData> appDataOptional = appDataRepository.getByAppSiteId(appSiteId);
-
-    if (appDataOptional.isPresent()) {
-      AppData existingAppData = appDataOptional.get();
-
-      String currentReceivedPayload = existingAppData.getReceivedPayload();
-
-      if (currentReceivedPayload == null || currentReceivedPayload.isEmpty()) {
-        currentReceivedPayload = "[]";
-      }
-
-      try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ArrayNode arrayNode = (ArrayNode) objectMapper.readTree(currentReceivedPayload);
-
-        JsonNode newObject = objectMapper.readTree(receivedData);
-        arrayNode.add(newObject);
-
-        String updatedReceivedPayload = arrayNode.toPrettyString();
-
-        existingAppData.setSendPayload(updatedReceivedPayload);
-
-        appDataRepository.save(existingAppData);
-      } catch (JsonProcessingException e) {
-        log.error("Error :", e);
-        throw new CouldNotPerformActionException("Error while handling payload");
-      }
     }
   }
 }

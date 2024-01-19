@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>App Data Details</title>
+    <div th:replace="~{core/fragments/header :: common-header}"></div>
+
+    <style>
+        .payload-container {
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #ccc;
+            padding: 5px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <header th:replace="~{core/fragments/header-section :: header-section}"></header>
+    <section class="vh-100">
+        <nav id="sidebarMenu" class="d-md-block bg-light sidebar"
+             th:replace="~{core/fragments/admin-sidebar ::admin-sidebar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col" style="margin-left: 297px">
+                    <div class="container-fluid">
+                        <div class="row row-margin-05">
+                            <div class="col">
+                                <form name="userList">
+                                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                                        <h5 class="h5">APP DATA DETAIL</h5>
+                                    </div>
+
+                                    <div class="flash-message" th:if="${messages}">
+                                        <ul th:each="message : ${messages}">
+                                            <li th:text="${message}" class="ui error message" />
+                                        </ul>
+                                    </div>
+                                    <div class="flash-message" th:if="${successMessage}">
+                                        <ul th:each="message : ${successMessage}">
+                                            <li th:text="${message}" class="ui success message" />
+                                        </ul>
+                                    </div>
+
+                                    <table cellpadding="10">
+                                        <tr>
+                                            <th>ID:</th>
+                                            <td th:text="${appData.id}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>UUID:</th>
+                                            <td th:text="${appData.uuid}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>AppSiteId:</th>
+                                            <td th:text="${appData.appSiteId}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Status:</th>
+                                            <td th:text="${appData.status}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>ReceivedPayload:</th>
+                                            <td>
+                                                <div class="payload-container" th:text="${appData.receivedPayload.trim()}"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>SendPayload:</th>
+                                            <td>
+                                                <div class="payload-container" th:text="${appData.sendPayload.trim()}"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>ExecAt:</th>
+                                            <td th:text="${appData.execAt}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Cycle:</th>
+                                            <td th:text="${appData.cycle}"></td>
+                                        </tr>
+                                        <tr>
+                                        <tr>
+                                            <th>Detail:</th>
+                                            <td th:text="${appData.detail}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>SendFlag:</th>
+                                            <td>
+                                                <span th:if="${appData.sendFlag == 0}" style="color: red;">Failed</span>
+                                                <span th:if="${appData.sendFlag == 1}" style="color: green;">Success</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>CreatedAt:</th>
+                                            <td th:text="${appData.createdAt}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>UpdatedAt:</th>
+                                            <td th:text="${appData.updatedAt}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>DeletedAt:</th>
+                                            <td th:text="${appData.deletedAt}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Is Active:</th>
+                                            <td th:text="${appData.isActive} ? 'Yes' : 'No'"></td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    feather.replace()
+</script>
+</body>
+</html>

@@ -2,6 +2,9 @@ package jp.co.fsz.clounect.googleCalendarPlugin.service;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
+import com.google.gson.Gson;
+import jp.co.fsz.clounect.core.dto.AppDataDto;
+import jp.co.fsz.clounect.core.service.AppDataService;
 import jp.co.fsz.clounect.googleCalendarPlugin.exception.CouldNotPerformActionException;
 import jp.co.fsz.clounect.googleCalendarPlugin.exception.CredentialsMissingException;
 import jp.co.fsz.clounect.googleCalendarPlugin.exception.NotFoundException;
@@ -9,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>[概要] Google Calendar レコードサービスクラス。</p>
@@ -27,12 +32,14 @@ import java.util.Map;
 public class GoogleCalendarRecordService {
   private final JsonDataOptimizationService jsonDataOptimizationService;
   private final GoogleCalendarService googleCalendarService;
+  private final AppDataService appDataService;
 
   public GoogleCalendarRecordService(
       JsonDataOptimizationService jsonDataOptimizationService,
-      GoogleCalendarService googleCalendarService) {
+      GoogleCalendarService googleCalendarService, AppDataService appDataService) {
     this.jsonDataOptimizationService = jsonDataOptimizationService;
     this.googleCalendarService = googleCalendarService;
+    this.appDataService = appDataService;
   }
 
   /**
@@ -63,7 +70,8 @@ public class GoogleCalendarRecordService {
    * @throws CouldNotPerformActionException カレンダーイベントの作成中に発生したその他の例外
    * @since 1.0
    */
-  public void addRecord(String accessToken, List<Map<String, Object>> jsonData, Long appSiteId) {
+  public void addRecord(String accessToken, Map<String, Object> jsonData,
+      AppDataDto appDataDto, UUID transactionId) {
     try {
       if (checkNullAndEmpty(accessToken) || jsonData == null || jsonData.isEmpty()) {
         throw new CredentialsMissingException("accessToken, JsonData are required");
@@ -73,9 +81,25 @@ public class GoogleCalendarRecordService {
       Event event = (Event) result.get("event");
       List<EventAttendee> participants = castList(result.get("participants"));
       if (event != null) {
+
+        String type = (String) result.get("type");
+        Integer recordId = (Integer) result.get("recordId");
+
+        List<AppDataDto.Data> events = new ArrayList<>();
+        Gson gson = new Gson();
+
         for (EventAttendee participant : participants) {
-          googleCalendarService.createCalendarEvent(accessToken, event, participant, appSiteId);
+          Event createdEvent = googleCalendarService.createCalendarEvent(accessToken,
+              event, participant, transactionId);
+          if (createdEvent != null) {
+            events.add(new AppDataDto.Data(createdEvent.getId(), type, createdEvent));
+          }
         }
+        AppDataDto.Payload sendPayload = new AppDataDto.Payload(
+            List.of(new AppDataDto.Data(String.valueOf(recordId), type, result)), events);
+        appDataDto.setSendPayload(gson.toJson(sendPayload));
+        appDataService.saveAppData(appDataDto);
+
       } else {
         throw new NotFoundException("イベントは存在しません");
       }
@@ -102,8 +126,9 @@ public class GoogleCalendarRecordService {
    * @throws CouldNotPerformActionException カレンダーイベントの更新中に発生したその他の例外
    * @since 1.0
    */
-  public void updateRecord(String accessToken, List<Map<String, Object>> jsonData,
-      String calendarId, List<String> eventIds) {
+  public void updateRecord(String accessToken, Map<String, Object> jsonData,
+      String calendarId, List<String> eventIds, AppDataDto appDataDto,
+      UUID transactionId) {
     try {
 
       if (checkNullAndEmpty(accessToken) || jsonData == null || jsonData.isEmpty()
@@ -117,14 +142,28 @@ public class GoogleCalendarRecordService {
       Event event = (Event) result.get("event");
 
       if (event != null) {
+        String type = (String) result.get("type");
+        Integer recordId = (Integer) result.get("recordId");
+
+        List<AppDataDto.Data> events = new ArrayList<>();
+        Gson gson = new Gson();
         for (String eventId : eventIds) {
 
           log.info("event" + event);
           Event updateEventDetails = googleCalendarService.updateCalendarEvent(
               accessToken, calendarId, eventId, event);
+          if (updateEventDetails != null) {
+            events.add(new AppDataDto.Data(updateEventDetails.getId(), type,
+                updateEventDetails));
+          }
 
           log.info("updateEventDetails" + updateEventDetails);
         }
+
+        AppDataDto.Payload sendPayload = new AppDataDto.Payload(
+            List.of(new AppDataDto.Data(String.valueOf(recordId), type, result)), events);
+        appDataDto.setSendPayload(gson.toJson(sendPayload));
+        appDataService.saveAppData(appDataDto);
       } else {
         throw new NotFoundException("イベントは存在しません");
       }
@@ -146,7 +185,8 @@ public class GoogleCalendarRecordService {
    * @throws CouldNotPerformActionException カレンダーイベントの削除中に発生したその他の例外
    * @since 1.0
    */
-  public void deleteRecord(String accessToken, String eventId) {
+  public void deleteRecord(String accessToken, String eventId,
+      UUID transactionId) {
     try {
 
       if (checkNullAndEmpty(accessToken) || checkNullAndEmpty(eventId)) {

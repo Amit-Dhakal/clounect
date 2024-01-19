@@ -328,7 +328,7 @@
         }
 
         // todo make dynamic later
-        const redirectUri = "http://localhost:8090/google/oauth2/callback";
+        const redirectUri = "https://clounect.mrcockpit.com/google/oauth2/callback";
         const scopes = 'https://www.googleapis.com/auth/calendar.events';
         const currentUrl = window.parent.location.protocol + '//' + window.parent.location.host + window.parent.location.pathname;
         const state = {
@@ -400,13 +400,16 @@
             };
 
             console.log("data ==>", data);
+            let headers = {
+                'Content-Type': 'application/json',
+            };
+            if (csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
 
             const parameter = {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken,
-                },
+                headers: headers,
                 body: JSON.stringify(data)
             };
 

@@ -227,13 +227,16 @@
                 validateEmailFlag: validateEmailFlag
             });
         }
+        let headers = {
+            'Content-Type': 'application/json',
+        };
+        if (csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+        }
 
         fetch('/google/add-user', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken,
-            },
+            headers: headers,
             body: JSON.stringify(userData)
         })
             .then(response => response.json())

@@ -232,13 +232,13 @@ public class CredentialsMapper {
     if (appDataOptional.isPresent()) {
       try {
         AppData appData = appDataOptional.get();
-        String receivedPayload = appData.getReceivedPayload();
+        String receivedPayload = appData.getSendPayload();
 
         JsonNode receivedDataArray = objectMapper.readTree(receivedPayload);
 
-        for (JsonNode eventData : receivedDataArray) {
+        for (JsonNode eventData : receivedDataArray.path("response")) {
           String eventId = eventData.path("id").asText();
-          String calendarId = eventData.path("organizer").path("email").asText();
+          String calendarId = eventData.path("data").path("creator").path("email").asText();
 
           CalendarEventDto calendarEventDto = new CalendarEventDto();
           calendarEventDto.setCalendarId(calendarId);

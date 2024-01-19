@@ -31,7 +31,7 @@
     function search() {
         if ($("#searchInput").val().trim()) {
             let searchInput = $("#searchInput");
-            let query = searchInput.val();
+            let query = searchInput.val().trim();
             let url = searchInput.attr("data-url");
             let searchUrl = url + "?query=" + encodeURIComponent(query);
 

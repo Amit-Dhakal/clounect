@@ -38,20 +38,20 @@ public class GoogleController {
   private final JustSfaService justSfaService;
   private final GoogleRecordService googleRecordService;
   private final SecurityUtil securityUtil;
-  private final CheckTypeService checkType;
+  private final CheckTypeService checkTypeService;
 
   @Autowired
   public GoogleController(GoogleCalendarService googleCalendarService,
       JsonDataOptimizationService jsonDataOptimizationService,
       JustSfaService justSfaService, GoogleRecordService googleRecordService,
-      SecurityUtil securityUtil, CheckTypeService checkType) {
+      SecurityUtil securityUtil, CheckTypeService checkTypeService) {
 
     this.googleCalendarService = googleCalendarService;
     this.jsonDataOptimizationService = jsonDataOptimizationService;
     this.justSfaService = justSfaService;
     this.googleRecordService = googleRecordService;
     this.securityUtil = securityUtil;
-    this.checkType = checkType;
+    this.checkTypeService = checkTypeService;
   }
 
   /**
@@ -209,12 +209,14 @@ public class GoogleController {
    *
    * @param data リクエストボディから取得した Google イベントのデータ
    * @param uuid Google イベントを処理するための UUID
+   * @return HTTPステータスおよびメッセージ
    * @since 1.0
    */
   @PostMapping("/webhook/{uuid}")
-  public void event(@RequestBody List<Map<String, Object>> data,
+  public ResponseEntity event(@RequestBody Map<String, Object> data,
       @PathVariable String uuid) {
-    log.info("webhook/" + uuid);
-    checkType.getPlayLoad(data, uuid);
+
+    checkTypeService.getPlayLoad(data, uuid, UUID.randomUUID());
+    return ResponseEntity.ok("Success");
   }
 }

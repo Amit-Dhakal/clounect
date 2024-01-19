@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <p>[概要] Google Calendar サービスクラス。</p>
@@ -71,8 +72,8 @@ public class GoogleCalendarService {
    * @throws CouldNotPerformActionException イベントの作成中にエラーが発生した場合は
    * @since 1.0
    */
-  public void createCalendarEvent(String accessToken, Event eventDetails,
-      EventAttendee participant, Long appSiteId) throws IOException {
+  public Event createCalendarEvent(String accessToken, Event eventDetails,
+      EventAttendee participant, UUID transactionId) throws IOException {
     try {
       GoogleCredentials credentials = GoogleCredentials.newBuilder()
           .setAccessToken(new AccessToken(accessToken, null)).build();
@@ -85,11 +86,13 @@ public class GoogleCalendarService {
       eventDetails.setAttendees(Collections.singletonList(participant));
 
       Event createdData = calendar.events().insert("primary", eventDetails).execute();
-      googleRecordService.appendReceivedPayload(createdData, appSiteId);
       log.info("Calendar created: " + createdData);
+      return createdData;
     } catch (CouldNotPerformActionException e) {
-      throw new CouldNotPerformActionException("Failed to creating CalendarEvent", e);
+      log.error("Error creating Event: ", e.getMessage());
+
     }
+    return null;
   }
 
   /**

@@ -169,9 +169,12 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(false);
         userRepo.save(user);
       }
-    } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Error while registering user", e);
+    } catch (UserNotFoundException | ResourceNotFoundException e) {
+      log.info("Not Found Exception: " + e.getMessage());
+      throw e;
+    } catch (CognitoIdentityProviderException e) {
+      log.info("Error Occured: " + e.getMessage());
+      throw e;
     }
   }
 

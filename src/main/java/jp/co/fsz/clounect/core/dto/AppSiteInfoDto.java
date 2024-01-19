@@ -42,7 +42,7 @@ public class AppSiteInfoDto {
     return AppSiteInfoDto.builder()
         .id(appSiteInfo.getId())
         .uuid(appSiteInfo.getUuid())
-        .webhookUrl("/webhook/")
+        .webhookUrl(appSiteInfo.getWebhookUrl())
         .appId(appSiteInfo.getAppId())
         .userId(appSiteInfo.getUserId())
         .config(appSiteInfo.getConfig())

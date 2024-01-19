@@ -117,13 +117,16 @@
             if (isActive) {
                 url = '/app-master/' + uuid + '/enable';
             }
+            let headers = {
+                'Content-Type': 'application/json',
+            };
+            if (csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
             $.ajax({
                 type: 'POST',
                 url: url,
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                },
+                headers: headers,
                 success: function (response) {
                     $('.loader-overlay').addClass('hidden');
                     console.log(response)

@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
-@RequestMapping("/app-data")
+@RequestMapping("/app-site")
 public class AppSiteInfoController {
   @GetMapping
   @User

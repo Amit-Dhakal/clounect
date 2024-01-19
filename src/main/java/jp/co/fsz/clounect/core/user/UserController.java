@@ -220,7 +220,7 @@ public class UserController {
       redirectAttributes.addFlashAttribute("requestURI", request.getRequestURI());
       return "core/users/signupForm";
     }
-    redirectAttributes.addFlashAttribute("successMessage",
+    redirectAttributes.addFlashAttribute( "successMessage",
         "Record Updated Successfully!!!");
 
     return "redirect:/user/"+ uuid;
@@ -239,7 +239,7 @@ public class UserController {
   @PostMapping("/{uuid}/delete")
   public String deleteUser(@PathVariable String uuid) {
     userService.deleteUser(uuid);
-    return "redirect:/admin/dashboard";
+    return "redirect:/dashboard";
   }
 
   /**

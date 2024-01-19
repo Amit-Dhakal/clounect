@@ -5,6 +5,8 @@
   <title>App Info</title>
   <div th:replace="~{core/fragments/header :: common-header}"></div>
 
+  <link rel="stylesheet" href="/css/userlink.css">
+
 </head>
 <body>
 <div>
@@ -15,13 +17,76 @@
     <nav id="sidebarMenu" class="d-md-block bg-light sidebar" sec:authorize="not hasRole('ROLE_ADMIN')"
          th:replace="~{core/fragments/sidebar :: sidebar}"></nav>
 
-    <h1> User App Management</h1>
-    <br/>
-    <br/>
+    <div class="container-fluid">
+      <div class="row">
+        <main class="col" style="margin-left: 297px">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h5 class="h5">App Data</h5>
+          </div>
+
+          <div class="container-fluid">
+            <div class="row row-margin-05">
+
+              <div class="col add-search-container">
+                <div th:replace="~{core/fragments/search-common :: search-common(placeholder='Search By Detail', searchUrl='/app-data', query=${query})}">
+                </div>
+              </div>
+            </div>
+            <div class="row row-margin-05">
+              <div class="col">
+                <form name="userList">
+                  <table id="tblForm" class="table rownum-table">
+                    <thead>
+                    <tr>
+                      <th scope="col">SN</th>
+                      <th scope="col">UUID</th>
+                        <th scope="col">created at</th>
+                        <th scope="col">Detail</th>
+                        <th scope="col">Status</th>
+                      <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${appData == null || appData.isEmpty()}">
+                      <td colspan="9">アプリデータが見つかりません。</td>
+                    </tr>
+                    <tr th:if="${appData != null}" th:each="appData : ${appData}">
+                        <td th:text="${appData.id}"></td>
+                        <td th:text="${appData.uuid}"></td>
+                        <td th:text="${appData.createdAt}"></td>
+                        <td th:text="${appData.detail}"></td>
+                        <td>
+                            <span th:if="${appData.sendFlag == 0}" style="color: red;">Failed</span>
+                            <span th:if="${appData.sendFlag == 1}" style="color: green;">Success</span>
+                        </td>
+                      <td>
+                        <a th:href="@{/app-data/{uuid}(uuid=${appData.uuid})}" class="btn btn-success">
+                          Details
+                        </a>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                  <div th:replace="~{core/fragments/pagination :: common-paginator(pageData=${appData}, pageUrl='/app-data')}">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
   </section>
 </div>
 
-<script>
+<div th:replace="~{core/fragments/confirmation-modal :: confirmation-modal}"></div>
+<script th:replace="~{core/fragments/confirmation-modal :: modal-script}"></script>
+<div th:replace="~{core/fragments/message-modal :: message-modal}"></div>
+<script th:replace="~{core/fragments/message-modal :: message-modal-script}"></script>
+<div th:replace="~{core/fragments/loader :: common-loader}"></div>
+<div th:replace="~{core/fragments/search-common :: search-script}"></div>
+
+<script th:inline="javascript">
   feather.replace()
 </script>
 </body>

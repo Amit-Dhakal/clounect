@@ -84,7 +84,7 @@
                                             </td>
                                             <td>
                                                 <form id="deleteForm" method="post">
-                                                    <button type="button" class="btn btn-light btnDelete"
+                                                    <button type="button" class="btn btn-light btnDelete" onclick="openConfirmationModal(this)"
                                                             th:attr="data-user-id=${user.uuid}"><span
                                                             data-feather="trash-2"></span>
                                                     </button>
@@ -115,6 +115,10 @@
 
 <script th:inline="javascript">
     feather.replace()
+    const csrfToken = document.querySelector('meta[name="_csrf"]') ?
+        document.querySelector('meta[name="_csrf"]').content : "";
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
+        document.querySelector('meta[name="_csrf_header"]').content : "";
 
     function toggleAppStatus() {
         $('.loader-overlay').removeClass('hidden');
@@ -122,22 +126,22 @@
 
         let uuid = $(this).data('user-id');
         let isActive = $(this).prop('checked');
-        let csrfToken = document.querySelector('meta[name="_csrf"]') ?
-            document.querySelector('meta[name="_csrf"]').content : "";
-        let csrfHeader = document.querySelector('meta[name="_csrf_header"]') ?
-            document.querySelector('meta[name="_csrf_header"]').content : "";
+
 
         let url = '/user/' + uuid + '/disable';
         if (isActive) {
             url = '/user/' + uuid + '/enable';
         }
+        let headers = {
+            'Content-Type': 'application/json',
+        };
+        if (csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+        }
         $.ajax({
             type: 'POST',
             url: url,
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            },
+            headers: headers,
             success: function(response) {
                 $('.loader-overlay').addClass('hidden');
                 console.log(response)
@@ -170,32 +174,34 @@
     }
     $('.enable-disable-app').change(toggleAppStatus);
 
-    $(document).ready(function () {
-        // Button click event
-        $(".btnDelete").on("click", function () {
-            if (confirm('Are you sure you want to delete this user?')) {
-                let uuid = $(this).data('userId');
+    function openConfirmationModal(element) {
+        openModal("無効にしますか？", "すべてのユーザーに対してアプリケーションを無効にします。 " +
+            "アプリケーションを無効にしますか? 他のユーザーがこのアプリケーションを使用している可能性があります。 <br/>",
+            toggleAppStatus)
 
-                let actionUrl = '/user/' + uuid + '/delete';
+        let uuid = $(element).data('userId');
+        let headers = {
+            'Content-Type': 'application/json',
+        };
+        if (csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/user/' + uuid + '/delete',
+            headers: headers,
+            success: function(response) {
+                $('.loader-overlay').addClass('hidden');
+                flashMessage("成功", "アプリケーションは正常に無効になりました" , 0, null, 'info')
 
-                $.ajax({
-                    type: "POST",
-                    url: actionUrl,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        [csrfHeader]: csrfToken
-                    },
-                    success: function () {
-                        alert("User deleted successfully");
-                        location.reload();
-                    },
-                    error: function () {
-                        alert("Error deleting user");
-                    }
-                });
+            },
+            error: function() {
+                $('.loader-overlay').addClass('hidden');
+                flashMessage("有効化に失敗しました", "アプリケーションを有効にできませんでした" , 0);
+
             }
         });
-    });
+    }
 
 </script>
 </body>

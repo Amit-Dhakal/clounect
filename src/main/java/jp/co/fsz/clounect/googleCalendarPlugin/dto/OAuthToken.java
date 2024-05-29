@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 /**
  * <p>[概要] OAuth トークン情報を保持するクラス。</p>
  * <p>[詳細] アクセストークン、リフレッシュトークン、トークンタイプ、および有効期限を保持します。</p>

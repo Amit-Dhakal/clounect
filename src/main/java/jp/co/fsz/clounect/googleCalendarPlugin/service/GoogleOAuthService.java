@@ -11,7 +11,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import jp.co.fsz.clounect.googleCalendarPlugin.dto.OAuthToken;
 import jp.co.fsz.clounect.googleCalendarPlugin.exception.TokenGenerationException;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -41,8 +40,7 @@ public class GoogleOAuthService {
    * @throws RuntimeException アクセストークンの取得に失敗した場合にスローされます。
    * @since 1.0
    */
-  public OAuthToken getAccessToken(String clientId, String clientSecret,
-      String authorizationCode, String redirectUri) {
+  public OAuthToken getAccessToken(String clientId, String clientSecret,String authorizationCode, String redirectUri) {
     try {
       List<String> scopes = List.of(calendarEvent);
       GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(

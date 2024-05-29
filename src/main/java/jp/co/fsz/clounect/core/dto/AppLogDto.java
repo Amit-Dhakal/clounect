@@ -2,7 +2,6 @@ package jp.co.fsz.clounect.core.dto;
 
 import jp.co.fsz.clounect.core.model.AppUsagesLog;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Data

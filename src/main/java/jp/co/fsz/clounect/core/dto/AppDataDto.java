@@ -21,7 +21,6 @@ import java.util.UUID;
  */
 @Data
 public class AppDataDto {
-
   private Long id;
   private UUID uuid;
   private AppSiteInfoDto appSiteId;

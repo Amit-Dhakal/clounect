@@ -16,11 +16,9 @@ configurations {
 		extendsFrom annotationProcessor
 	}
 }
-
 repositories {
 	mavenCentral()
 }
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -47,7 +45,10 @@ dependencies {
 	implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
 	implementation 'com.google.http-client:google-http-client-jackson2:1.32.1'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	implementation 'org.postgresql:postgresql:42.2.24'
 }
+
+
 
 tasks.named('test') {
 	useJUnitPlatform()

@@ -1,5 +1,4 @@
 package jp.co.fsz.clounect.googleCalendarPlugin.controller;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import jp.co.fsz.clounect.googleCalendarPlugin.dto.OAuthToken;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-
 import java.util.*;
 
 /**
@@ -83,8 +81,7 @@ public class GoogleController {
    */
 
   @RequestMapping(value = "/oauth2/callback", method = RequestMethod.GET, params = "code")
-  public RedirectView oauth2Callback(@RequestParam(value = "code") String code,
-      @RequestParam(value = "state") String state) {
+  public RedirectView oauth2Callback(@RequestParam(value = "code") String code,@RequestParam(value = "state") String state) {
 
     try {
       Map<String, String> parsedState = jsonDataOptimizationService.parseState(state,
@@ -122,10 +119,8 @@ public class GoogleController {
    * @since 1.0
    */
   @PostMapping("/validate-email")
-  public ResponseEntity<Map<String, Object>> validateEmail(
-      @RequestBody Map<String, String> email) {
+  public ResponseEntity<Map<String, Object>> validateEmail(@RequestBody Map<String, String> email) {
     Map<String, Object> response = new HashMap<>();
-
     try {
       OAuthToken token = securityUtil.getAccessToken();
       String accessToken = token.getAccessToken();

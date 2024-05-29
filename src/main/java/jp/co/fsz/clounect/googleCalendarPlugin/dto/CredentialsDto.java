@@ -1,9 +1,7 @@
 package jp.co.fsz.clounect.googleCalendarPlugin.dto;
-
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-
 /**
  * <p>[概要] イベントに関連する情報を保持するデータ転送オブジェクト（DTO）クラス。</p>
  * <p>[詳細] このクラスは、イベントに関連する情報をまとめて保持します。</p>

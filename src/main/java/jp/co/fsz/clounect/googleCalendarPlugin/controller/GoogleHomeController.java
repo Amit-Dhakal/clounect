@@ -1,5 +1,4 @@
 package jp.co.fsz.clounect.googleCalendarPlugin.controller;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jp.co.fsz.clounect.core.security.annotations.User;
 import jp.co.fsz.clounect.googleCalendarPlugin.service.UserSetting;
